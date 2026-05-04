@@ -28,7 +28,8 @@ Agents upload a label image + application data; the system checks they match and
 ## Planned
 
 ### Next
-- Deploy to Vercel and confirm public URL + < 5s response time
+- ~~Deploy to Vercel and confirm public URL + < 5s response time~~ ✅ Live at https://cola-verify.vercel.app
+- ~~Connect GitHub repo (`fsyeddev/ttb-label`) to Vercel for auto-deploy on push~~ ✅ Done
 - Expand approved class/type list to the full 27 CFR Part 5 designation list (see breakdown below)
 
 ### Future
