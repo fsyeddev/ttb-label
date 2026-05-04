@@ -32,9 +32,12 @@ export function fuzzyContains(haystack: string | null, needle: string | null): b
 }
 
 /**
- * Simple Levenshtein distance for catching minor typos.
+ * Levenshtein edit distance between two raw strings.
+ * Exposed as a magnitude signal for user-facing notes (e.g., "differs by N characters").
+ * Callers control normalization — pass strings already normalized to whatever level
+ * is appropriate for the comparison being reported.
  */
-function levenshtein(a: string, b: string): number {
+export function levenshtein(a: string, b: string): number {
   const m = a.length;
   const n = b.length;
   const dp: number[][] = Array.from({ length: m + 1 }, (_, i) =>

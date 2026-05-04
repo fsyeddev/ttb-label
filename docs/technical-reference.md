@@ -60,15 +60,17 @@ Image + FormData
 - `parseABV` — parses ABV strings; supports `XX% Alc./Vol.` and `XX Proof` (auto-converts proof ÷ 2)
 - `compareABV` — numeric comparison within ±0.1% tolerance
 - `compareNetContents` — normalizes units before comparing; handles mL ↔ L conversion (1 L = 1000 mL)
-- `compareGovernmentWarning` — two-stage check:
-  1. Hard fail if `GOVERNMENT WARNING:` prefix not present or not in ALL CAPS
-  2. Fuzzy similarity (Levenshtein, ≥92% = pass) after stripping line-break hyphens (`([A-Za-z])\s*-\s*([A-Za-z])` pattern handles all hyphen formats)
+- `compareGovernmentWarning` — strict 100% threshold (see BUG-08 / [`docs/specs/govwarn-100pct-threshold.md`](specs/govwarn-100pct-threshold.md)):
+  1. Hard fail if extracted text is null/empty, or `GOVERNMENT WARNING` (uppercase substring) not present (CAPS-aware: lower/title-case form returns "must be ALL CAPS"; absent entirely returns "prefix not found")
+  2. Strict equality against the official statutory text after normalization (line-break hyphen joining + whitespace collapse only). The CAPS gate intentionally does not require the colon — a missing colon is a wording corruption, not a CAPS violation, and falls into the equality check.
+  3. Non-100% match returns `warning` with a Levenshtein edit-distance signal so the agent gets a magnitude hint. Bias intentional: false-positive flags are cheaper than false-negative passes for statutorily exact text.
 
 ### Semantic Validator — `lib/validators/semantic.ts`
 - `normalize` — lowercase, collapse whitespace, normalize apostrophes/dashes
 - `fuzzyEqual` — case-insensitive exact match (handles "STONE'S THROW" vs "Stone's Throw")
 - `fuzzyContains` — partial match for address fields
 - `similarity` — Levenshtein distance ratio (0–1)
+- `levenshtein` — raw Levenshtein edit distance (exposed for user-facing magnitude signals like "differs by N characters")
 - `compareTextField` — tiered result: pass (≥0.85), warning (0.6–0.85), fail (<0.6)
 
 ### Spirits Validator — `lib/validators/spirits.ts`
@@ -116,8 +118,8 @@ Rule-based label-only checks. Each rule is a pure function returning `Compliance
 ### Government Warning
 - Agents do NOT enter the government warning — it is auto-checked by the system
 - Official text is the statutory language from the Alcoholic Beverage Labeling Act of 1988 (27 CFR Part 16)
-- Hard requirement: `GOVERNMENT WARNING:` prefix must be in ALL CAPS
-- Comparison uses Levenshtein similarity ≥92% after stripping line-break hyphens
+- Hard requirement: `GOVERNMENT WARNING` prefix must be in ALL CAPS
+- Comparison is strict equality after normalization (line-break hyphen joining + whitespace collapse). Any non-100% match routes to `warning` for human review (BUG-08 / [`docs/specs/govwarn-100pct-threshold.md`](specs/govwarn-100pct-threshold.md))
 
 ### Brand Name vs Fanciful Name
 - TTB COLA applications have separate fields for Brand Name and Fanciful Name

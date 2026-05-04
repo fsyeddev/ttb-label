@@ -107,22 +107,60 @@ describe("compareGovernmentWarning", () => {
     expect(r.note).toMatch(/all capital/i);
   });
 
-  it("fails when warning is present but severely truncated", () => {
+  it("warns when warning is present but truncated", () => {
+    // Per BUG-08 / govwarn-100pct-threshold spec: any non-100% match routes to
+    // human review, including obvious truncations. Bias toward flag, not pass.
     const partial = "GOVERNMENT WARNING: (1) According to the Surgeon General...";
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, partial);
-    expect(r.status).toBe("fail");
+    expect(r.status).toBe("warning");
+    expect(r.note).toMatch(/character/i);
   });
 
-  it("passes when warning has minor OCR errors from line-break hyphens", () => {
+  it("warns when warning has line-break hyphen artifacts", () => {
+    // Hyphen joining recovers "GENERAL" / "CONSUMPTION" but the official text
+    // has "General" / "Consumption" (case differs). Strict equality after
+    // normalization fails, so this surfaces as warning rather than pass.
     const withHyphens =
       "GOVERNMENT WARNING: (1) According to the Surgeon GEN- ERAL, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) CONSUMP- TION of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.";
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, withHyphens);
-    expect(r.status).toBe("pass");
+    expect(r.status).toBe("warning");
   });
 
   it("fails when warning is completely absent", () => {
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, "No warning here");
     expect(r.status).toBe("fail");
+  });
+
+  // ─── Sneaky one-word substitutions — BUG-08 cat-6 fixtures ─────────────────
+  // The government warning has exact statutory wording; subtle substitutions
+  // must not auto-pass. Each test below mirrors a real cat-6 fixture from
+  // evals/fixtures/generated/06-warning-sneaky-{01,03,04,05}.json.
+
+  it("warns when 'may cause' is substituted with 'could cause'", () => {
+    const sneaky = GOVERNMENT_WARNING_OFFICIAL.replace("may cause", "could cause");
+    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, sneaky);
+    expect(r.status).toBe("warning");
+  });
+
+  it("warns when 'a Surgeon General' replaces 'the Surgeon General'", () => {
+    const sneaky = GOVERNMENT_WARNING_OFFICIAL.replace("the Surgeon General", "a Surgeon General");
+    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, sneaky);
+    expect(r.status).toBe("warning");
+  });
+
+  it("warns when 'alcohol beverages' replaces 'alcoholic beverages' in the first sentence", () => {
+    // Replace only the first occurrence so the second sentence still matches.
+    const sneaky = GOVERNMENT_WARNING_OFFICIAL.replace("alcoholic beverages", "alcohol beverages");
+    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, sneaky);
+    expect(r.status).toBe("warning");
+  });
+
+  it("warns when colon is missing after GOVERNMENT WARNING", () => {
+    // CAPS prefix is intact — should NOT hard-fail. Falls into equality check
+    // and surfaces as warning so the agent can confirm wording integrity.
+    const sneaky = GOVERNMENT_WARNING_OFFICIAL.replace("GOVERNMENT WARNING:", "GOVERNMENT WARNING");
+    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, sneaky);
+    expect(r.status).toBe("warning");
   });
 });
 

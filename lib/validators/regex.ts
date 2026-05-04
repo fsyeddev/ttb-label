@@ -1,5 +1,5 @@
 // Regex-based exact/format validators for fields that have strict format requirements
-import { similarity } from './semantic';
+import { levenshtein } from './semantic';
 
 export const GOVERNMENT_WARNING_OFFICIAL =
   'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.';
@@ -108,12 +108,17 @@ export function compareNetContents(submitted: string, extracted: string): { matc
 }
 
 /**
- * Compare government warning. The official text must be present and
- * "GOVERNMENT WARNING:" must be in ALL CAPS (per TTB requirements).
+ * Compare government warning against the official statutory text.
  *
- * Uses fuzzy similarity to tolerate:
- * - Line-break hyphens ("CONSUMP- TION" → "CONSUMPTION")
- * - Minor OCR errors (1-2 misread characters across the ~218-char text)
+ * Three outcomes (see docs/specs/govwarn-100pct-threshold.md, BUG-08):
+ *   - fail   — structural violation: warning entirely absent, or "GOVERNMENT WARNING"
+ *              not in ALL CAPS. These are unambiguous CFR violations.
+ *   - pass   — exact match against the official text after normalization
+ *              (line-break hyphen joining + whitespace collapse only).
+ *   - warning — anything else. The text is statutorily exact, so any wording
+ *               deviation routes to human review with an edit-distance signal.
+ *               Bias intentional: false-positive flags are cheaper than
+ *               false-negative passes for this field.
  */
 export function compareGovernmentWarning(submitted: string | null, extracted: string | null): {
   match: boolean;
@@ -126,8 +131,10 @@ export function compareGovernmentWarning(submitted: string | null, extracted: st
 
   const ext = extracted.trim();
 
-  // ALL CAPS prefix is a hard TTB requirement — check before fuzzy comparison
-  if (!ext.includes('GOVERNMENT WARNING:')) {
+  // Hard fail #1: prefix CAPS check. Note this gates on "GOVERNMENT WARNING"
+  // (no colon) so a missing colon falls through into the equality check below
+  // and produces a warning, not a misleading "must be ALL CAPS" failure.
+  if (!ext.includes('GOVERNMENT WARNING')) {
     if (/government warning/i.test(ext)) {
       return {
         match: false,
@@ -143,19 +150,17 @@ export function compareGovernmentWarning(submitted: string | null, extracted: st
   // "CONSUMP- TION" → "CONSUMPTION", "CONSUMP-TION" → "CONSUMPTION", "GEN- ERAL" → "GENERAL"
   const joinHyphens = (s: string) => s.replace(/([A-Za-z])\s*-\s*([A-Za-z])/g, '$1$2').replace(/\s+/g, ' ').trim();
 
-  const sim = similarity(joinHyphens(GOVERNMENT_WARNING_OFFICIAL), joinHyphens(ext));
+  const officialNorm = joinHyphens(GOVERNMENT_WARNING_OFFICIAL);
+  const extractedNorm = joinHyphens(ext);
 
-  if (sim >= 0.92) {
+  if (officialNorm === extractedNorm) {
     return { match: true, status: 'pass' };
   }
 
-  if (sim >= 0.75) {
-    return {
-      match: false,
-      status: 'warning',
-      note: `Government warning present but text differs from required TTB wording (${Math.round(sim * 100)}% match). Verify the label manually.`,
-    };
-  }
-
-  return { match: false, status: 'fail', note: 'Government warning text does not match required TTB language.' };
+  const distance = levenshtein(officialNorm, extractedNorm);
+  return {
+    match: false,
+    status: 'warning',
+    note: `Government warning text differs from required TTB language by ${distance} character${distance === 1 ? '' : 's'}. Manual review required — the warning text is statutorily exact.`,
+  };
 }

@@ -56,19 +56,6 @@ Issues uncovered while running the manually-generated label fixtures against the
 - **Suspected area:** `checkStatementOfComposition` keyword matching is too narrow. Likely matches only literal "liqueur" / "cordial" / "specialty" / "flavored" and misses common liqueur subtypes (Amaretto, Triple Sec, Curaçao, Schnapps, Sambuca, Crème de…).
 - **Fix scope:** Expand the trigger list in `lib/validators/compliance.ts` to include the full set of liqueur subtypes already in `APPROVED_CLASS_TYPES`.
 
-### 🟠 BUG-08 — Government warning fuzzy threshold accepts subtle wording corruptions
-
-- **Cases:** `06-warning-sneaky-01`, `06-warning-sneaky-03`, `06-warning-sneaky-04` all returned PASS despite intentional one-word substitutions
-- **Current behavior:** `compareGovernmentWarning` in `lib/validators/regex.ts` uses tiered Levenshtein similarity — `≥0.92 → pass`, `0.75–0.92 → warning`, `<0.75 → fail`. Single-word swaps like "may cause" → "could cause" land above 0.92 so they auto-pass.
-- **Decision:** The government warning text is statutorily exact. Any deviation should require a human glance — false-positive flags are cheaper than false-negative passes for this field.
-- **Required behavior:**
-  - **Hard fail (unchanged):** warning entirely missing; `GOVERNMENT WARNING:` not in ALL CAPS
-  - **Pass:** extracted text exactly matches the official statutory text after normalization (whitespace collapse + line-break hyphen joining only — no other transformations)
-  - **Warning (new):** any non-100% match — flag for human review with the diff so the agent can confirm intent
-- **Affects:** `lib/validators/regex.ts` — `compareGovernmentWarning` function (drop the 0.92 / 0.75 tiers; single equality check after normalization)
-- **Eval expectation update:** Cat 6 cases should expect `WARNING` status on the gov warning field (currently expects PASS or FAIL ambiguously). Update `scripts/run-fixture-evals.ts` and the existing pipeline test that asserts the 92% threshold passes minor OCR errors.
-- **Open question:** What about real OCR errors (e.g., "M" misread as "L" in "CONSUMPTION")? Under the new rule those would also flag for review. Is that acceptable noise, or do we want a narrow allowlist of known-OCR-equivalent substitutions? **Lean: accept the noise.** Human review is fast; false negatives on actual non-compliant warnings are not.
-
 ### 🟡 BUG-07 — Fanciful-name-as-class submission has no useful path
 
 - **Cases:** `04-noncompliant-18` (Volcano Fire), `04-noncompliant-20` (Mountain Ice)
@@ -159,7 +146,8 @@ These categories all worked as designed and need no further action:
 
 ## Closed bugs
 
-_None yet._
+### 🟠 BUG-08 — Government warning fuzzy threshold accepts subtle wording corruptions
+- **Resolution:** Dropped the tiered Levenshtein thresholds in `compareGovernmentWarning`. After the structural hard-fail checks (null / not-ALL-CAPS), the function now does a strict equality check against the official text (line-break hyphen joining + whitespace collapse normalization only). Any non-100% match returns `warning` with an edit-distance signal in the note. Sneaky cases `06-warning-sneaky-{01,03,04,05}` now flag for review instead of passing. Spec: [`docs/specs/govwarn-100pct-threshold.md`](specs/govwarn-100pct-threshold.md).
 
 ---
 
