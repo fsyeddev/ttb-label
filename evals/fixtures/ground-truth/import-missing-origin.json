@@ -1,0 +1,37 @@
+{
+  "id": "import-missing-country-of-origin",
+  "description": "Imported Scotch whisky — country of origin not on label but required",
+  "formData": {
+    "brand_name": "Glen Cairn Reserve",
+    "class_type": "Blended Scotch Whisky",
+    "abv": "43% Alc./Vol.",
+    "net_contents": "750 mL",
+    "bottler_name": "Cairn Spirits Ltd.",
+    "bottler_address": "Edinburgh, Scotland",
+    "country_of_origin": "Scotland",
+    "government_warning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+    "is_import": true
+  },
+  "mockExtraction": {
+    "brand_name": "Glen Cairn Reserve",
+    "class_type": "Blended Scotch Whisky",
+    "abv": "43% Alc./Vol.",
+    "net_contents": "750 mL",
+    "bottler_name": "Cairn Spirits Ltd.",
+    "bottler_address": "Edinburgh, Scotland",
+    "country_of_origin": null,
+    "government_warning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+    "confidence": "high"
+  },
+  "expectedOverall": "FAIL",
+  "expectedFields": {
+    "brand_name": "pass",
+    "class_type": "pass",
+    "abv": "pass",
+    "net_contents": "pass",
+    "bottler_name": "pass",
+    "bottler_address": "pass",
+    "country_of_origin": "fail",
+    "government_warning": "pass"
+  }
+}

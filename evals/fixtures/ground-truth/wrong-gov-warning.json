@@ -1,0 +1,37 @@
+{
+  "id": "wrong-gov-warning-capitalization",
+  "description": "Government warning uses title case 'Government Warning:' instead of all-caps — Jenny's real case",
+  "formData": {
+    "brand_name": "Silver Creek Vodka",
+    "class_type": "Vodka",
+    "abv": "40% Alc./Vol.",
+    "net_contents": "1 L",
+    "bottler_name": "Silver Creek Spirits LLC",
+    "bottler_address": "Austin, TX 78701",
+    "country_of_origin": "USA",
+    "government_warning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+    "is_import": false
+  },
+  "mockExtraction": {
+    "brand_name": "Silver Creek Vodka",
+    "class_type": "Vodka",
+    "abv": "40% Alc./Vol.",
+    "net_contents": "1 L",
+    "bottler_name": "Silver Creek Spirits LLC",
+    "bottler_address": "Austin, TX 78701",
+    "country_of_origin": "USA",
+    "government_warning": "Government Warning: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+    "confidence": "high"
+  },
+  "expectedOverall": "FAIL",
+  "expectedFields": {
+    "brand_name": "pass",
+    "class_type": "pass",
+    "abv": "pass",
+    "net_contents": "pass",
+    "bottler_name": "pass",
+    "bottler_address": "pass",
+    "country_of_origin": "pass",
+    "government_warning": "fail"
+  }
+}
