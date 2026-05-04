@@ -21,7 +21,7 @@ Agents upload a label image + application data; the system checks they match and
 - Proof ↔ ABV conversion (e.g., 70 Proof = 35% ABV)
 - Unit normalization for net contents (mL ↔ L)
 - Fuzzy matching for text fields — handles minor formatting differences and typos
-- 65 automated tests passing (unit, parser, and end-to-end pipeline)
+- 81 automated tests passing (unit, parser, and end-to-end pipeline)
 
 ---
 
@@ -30,15 +30,17 @@ Agents upload a label image + application data; the system checks they match and
 ### Next
 - ~~Deploy to Vercel and confirm public URL + < 5s response time~~ ✅ Live at https://cola-verify.vercel.app
 - ~~Connect GitHub repo (`fsyeddev/ttb-label`) to Vercel for auto-deploy on push~~ ✅ Done
-- Expand approved class/type list to the full 27 CFR Part 5 designation list (see breakdown below)
+- ~~Expand approved class/type list to cover real-world labels (flavored class + common cordials)~~ ✅ Done — minor/specialty designations deliberately excluded
 
 ### Future
-- **Wine support** — 27 CFR Part 4 validation rules
-- **Beer / Malt beverage support** — 27 CFR Part 7 validation rules
-- **Batch upload** — submit multiple applications at once, aggregate results view, CSV export
-- **Image pre-processing** — deskew, glare reduction, angle correction for low-quality photos
-- **Live extraction evals** — run eval suite against real label images (currently mocked)
-- **TTB system integration** — direct connection to COLA system (long-term; requires separate authorization)
+Each item below has a spec in [docs/specs/](specs/). A spec must be Approved before code is written.
+
+- **[Compliance Advisories](specs/compliance-advisories.md)** — surface TTB rule violations (bottle size, age statement, composition statement, etc.) as informational flags alongside the cross-validation results, without affecting the PASS / FAIL / REVIEW headline verdict — *spec drafted, awaiting approval*
+- **[Wine support](specs/wine.md)** — 27 CFR Part 4 validation rules — *spec drafted, awaiting approval*
+- **[Beer / Malt beverage support](specs/beer-malt.md)** — 27 CFR Part 7 validation rules — *placeholder*
+- **[Batch upload](specs/batch-upload.md)** — submit multiple applications at once, aggregate results view, CSV export — *placeholder*
+- **[Image pre-processing](specs/image-preprocessing.md)** — deskew, glare reduction, angle correction for low-quality photos — *placeholder*
+- **[Live extraction evals](specs/live-extraction-evals.md)** — run eval suite against real label images (currently mocked) — *placeholder*
 
 ---
 
@@ -86,6 +88,10 @@ Agents upload a label image + application data; the system checks they match and
 | Single Malt Scotch Whisky | ✅ Added |
 | Blended Malt Scotch Whisky | ✅ Added |
 | Bottled-in-Bond (27 CFR Part 5.42) | ✅ Added |
+| Flavored Whisky/Whiskey | ✅ Added |
+| Cinnamon Whisky/Whiskey (Fireball) | ✅ Added |
+| Honey Whisky/Whiskey (Tennessee Honey, American Honey) | ✅ Added |
+| Apple Whisky/Whiskey (Crown Royal Apple) | ✅ Added |
 
 ### Gin ✅ Partial
 | Designation | Status |
@@ -97,11 +103,13 @@ Agents upload a label image + application data; the system checks they match and
 | Compound Gin | ✅ Added |
 | Old Tom Gin | ✅ Added |
 | Genever / Geneva Gin | ✅ Added |
+| Flavored Gin | ✅ Added |
 
 ### Vodka ✅
 | Designation | Status |
 |---|---|
 | Vodka | ✅ |
+| Flavored Vodka | ✅ Added |
 
 ### Rum ✅ Partial
 | Designation | Status |
@@ -114,6 +122,9 @@ Agents upload a label image + application data; the system checks they match and
 | Virgin Islands Rum | ✅ Added |
 | Demerara Rum | ✅ Added |
 | Agricole Rum | ✅ Added |
+| Spiced Rum (Captain Morgan, Kraken) | ✅ Added |
+| Coconut Rum (Malibu) | ✅ Added |
+| Flavored Rum | ✅ Added |
 
 ### Brandy ✅ Partial
 | Designation | Status |
@@ -131,6 +142,7 @@ Agents upload a label image + application data; the system checks they match and
 | Marc Brandy / Pomace Brandy | ✅ Added |
 | Neutral Brandy | ✅ Added |
 | Blend of Straight Brandies | ✅ Added |
+| Flavored Brandy | ✅ Added |
 
 ### Tequila / Mezcal ✅ Partial
 | Designation | Status |
@@ -154,6 +166,10 @@ Agents upload a label image + application data; the system checks they match and
 | Bitters | ✅ |
 | Sloe Gin (classified as liqueur) | ✅ Added |
 | Cinnamon Liqueur | ✅ Added |
+| Sambuca | ✅ Added |
+| Crème de Menthe | ✅ Added |
+| Crème de Cacao | ✅ Added |
+| Crème de Cassis | ✅ Added |
 
 ### Other / Specialty ✅ Partial
 | Designation | Status |

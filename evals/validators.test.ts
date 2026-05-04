@@ -199,4 +199,72 @@ describe("isApprovedClassType", () => {
   it("approves tequila", () => {
     expect(isApprovedClassType("Blanco Tequila")).toBe(true);
   });
+
+  // Flavored class — 27 CFR 5.22(i)
+  it("approves Flavored Vodka", () => {
+    expect(isApprovedClassType("Flavored Vodka")).toBe(true);
+  });
+
+  it("approves Flavored Gin", () => {
+    expect(isApprovedClassType("Flavored Gin")).toBe(true);
+  });
+
+  it("approves Flavored Rum", () => {
+    expect(isApprovedClassType("Flavored Rum")).toBe(true);
+  });
+
+  it("approves Flavored Brandy", () => {
+    expect(isApprovedClassType("Flavored Brandy")).toBe(true);
+  });
+
+  it("approves Flavored Whisky", () => {
+    expect(isApprovedClassType("Flavored Whisky")).toBe(true);
+  });
+
+  it("approves Flavored Whiskey (alt spelling)", () => {
+    expect(isApprovedClassType("Flavored Whiskey")).toBe(true);
+  });
+
+  // Real-world flavored variants printed on labels
+  it("approves Spiced Rum (Captain Morgan, Kraken)", () => {
+    expect(isApprovedClassType("Spiced Rum")).toBe(true);
+  });
+
+  it("approves Coconut Rum (Malibu)", () => {
+    expect(isApprovedClassType("Coconut Rum")).toBe(true);
+  });
+
+  it("approves Cinnamon Whisky (Fireball)", () => {
+    expect(isApprovedClassType("Cinnamon Whisky")).toBe(true);
+  });
+
+  it("approves Honey Whiskey (Tennessee Honey, American Honey)", () => {
+    expect(isApprovedClassType("Honey Whiskey")).toBe(true);
+  });
+
+  it("approves Apple Whisky (Crown Royal Apple)", () => {
+    expect(isApprovedClassType("Apple Whisky")).toBe(true);
+  });
+
+  // Common cordials seen on US shelves
+  it("approves Sambuca", () => {
+    expect(isApprovedClassType("Sambuca")).toBe(true);
+  });
+
+  it("approves Crème de Menthe", () => {
+    expect(isApprovedClassType("Crème de Menthe")).toBe(true);
+  });
+
+  it("approves Creme de Cacao (no accent)", () => {
+    expect(isApprovedClassType("Creme de Cacao")).toBe(true);
+  });
+
+  it("approves Crème de Cassis", () => {
+    expect(isApprovedClassType("Crème de Cassis")).toBe(true);
+  });
+
+  // Negative — fanciful expression that is not a CFR designation
+  it("does not approve a fanciful expression name", () => {
+    expect(isApprovedClassType("Tennessee Fire")).toBe(false);
+  });
 });

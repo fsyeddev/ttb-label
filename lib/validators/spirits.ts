@@ -47,20 +47,28 @@ export const APPROVED_CLASS_TYPES = [
   'canadian whisky', 'canadian whiskey',
   'bottled-in-bond bourbon whisky', 'bottled-in-bond bourbon whiskey',
   'bottled in bond bourbon whisky', 'bottled in bond bourbon whiskey',
+  // Common flavored whisky variants printed on real labels (Fireball, Tennessee Honey, Crown Royal Apple, etc.)
+  'flavored whisky', 'flavored whiskey',
+  'cinnamon whisky', 'cinnamon whiskey',
+  'honey whisky', 'honey whiskey',
+  'apple whisky', 'apple whiskey',
   // Gin — 27 CFR Part 5.22(c)
   'gin', 'distilled gin', 'dry gin', 'london dry gin',
   'compound gin', 'old tom gin', 'genever', 'geneva gin',
+  'flavored gin',
   // Vodka — 27 CFR Part 5.22(a)
-  'vodka',
+  'vodka', 'flavored vodka',
   // Rum — 27 CFR Part 5.22(f)
   'rum', 'light rum', 'dark rum', 'aged rum',
   'puerto rican rum', 'virgin islands rum', 'demerara rum', 'agricole rum',
+  'spiced rum', 'coconut rum', 'flavored rum',
   // Brandy — 27 CFR Part 5.22(d)
   'brandy', 'grape brandy', 'fruit brandy',
   'apple brandy', 'applejack', 'blended applejack',
   'cognac', 'armagnac', 'calvados', 'pisco', 'grappa',
   'marc brandy', 'pomace brandy', 'neutral brandy',
   'blend of straight brandies',
+  'flavored brandy',
   // Tequila / Mezcal — 27 CFR Part 5.22(g)
   'tequila', 'blanco tequila', 'silver tequila', 'plata tequila',
   'joven tequila', 'gold tequila',
@@ -71,7 +79,10 @@ export const APPROVED_CLASS_TYPES = [
   'cinnamon liqueur', 'coffee liqueur', 'cream liqueur', 'fruit liqueur',
   'herbal liqueur', 'nut liqueur', 'orange liqueur',
   'triple sec', 'curacao', 'amaretto', 'schnapps', 'bitters',
-  'sloe gin',
+  'sloe gin', 'sambuca',
+  'crème de menthe', 'creme de menthe',
+  'crème de cacao', 'creme de cacao',
+  'crème de cassis', 'creme de cassis',
   // Other spirits
   'absinthe', 'aquavit', 'calvados', 'grappa', 'cachaça',
   'shochu', 'baijiu', 'palinka', 'pálinka',
