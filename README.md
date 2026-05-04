@@ -89,9 +89,65 @@ Label image + form data
 ## Running Tests
 
 ```bash
-npm test           # run all 64 unit + pipeline tests once
+npm test           # run all unit + pipeline tests once
 npm run test:watch # watch mode
 ```
+
+### Fixture-based end-to-end evals
+
+In addition to the unit and pipeline tests above, the project ships **30 manually-generated label fixtures** (image + matching JSON) that exercise the full live system — image upload through Gemini Vision extraction through validation. Each fixture is categorized by what behavior it should produce.
+
+| Category | Count | What it tests |
+|---|---|---|
+| `01-pass-*` | 3 | Clean labels that should produce all-green PASS |
+| `02-mismatch-*` | 5 | Label is correct but JSON has a deliberate field mismatch — should FAIL cross-validation |
+| `03-noncompliant-*` | 5 | JSON matches label, but label has a TTB rule violation — should PASS cross-validation with an advisory flag |
+| `04-noncompliant-*` | 9 | Same idea as 03 but with a wider variety of compliance issues + a `reason` field in the JSON |
+| `05-warning-bad-*` | 4 | Government warning obviously wrong (missing, wrong capitalization, truncated, wrong wording) — should FAIL |
+| `06-warning-sneaky-*` | 4 | Government warning subtly wrong (single-word substitutions a casual reader might miss) |
+
+Fixtures live in `evals/fixtures/generated/` — each `<id>.png` + `<id>.json` pair, plus `manifest.json` describing the expected behavior for each case.
+
+#### Two scripts
+
+```bash
+npm run eval:quick   # One fixture per category (6 cases, ~30s) — fast smoke test
+npm run eval:full    # Full sweep across all 30 fixtures (~5 min)
+```
+
+Both scripts hit `http://localhost:3000` by default. Start the dev server in another terminal first (`npm run dev`), or override the URL to test the deployed system:
+
+```bash
+npm run eval:quick -- --url=https://cola-verify.vercel.app
+npm run eval:full -- --url=https://cola-verify.vercel.app
+```
+
+Other flags (apply to both scripts):
+
+| Flag | Effect |
+|---|---|
+| `--verbose` | Show which field failed and what advisories fired (already on for `eval:quick`) |
+| `--only=<id>,<id>` | Run only a specific list of fixture IDs (overrides the quick set) |
+
+#### Output
+
+Each case prints either `✓` (matched expected behavior) or `✗` (didn't match). At the end, a per-category summary shows which cases failed and why. Example:
+
+```
+[01-pass-01] Clean Kentucky bourbon         … ✓ PASS  failed=0  adv=0
+[02-mismatch-01] JSON wrong brand           … ✓ FAIL  failed=1  adv=0
+     ↳ brand_name: Brand Name mismatch: submitted "Wrong Brand" vs label "Smoky Hollow"
+──────────────────────────────────────────────────────────────────────
+Done in 31.2s — 2/2 matched expectations
+```
+
+#### Cost note
+
+Each fixture invocation costs one Gemini Vision call (~$0.0001 on `gemini-2.5-flash-lite`). Full sweep ≈ $0.005. Quick sweep ≈ $0.001. Free tier is capped at 20 requests/day per model — the **paid tier** is needed to run a full sweep without hitting quota.
+
+#### Tracked findings
+
+Bugs surfaced from these evals are tracked in [docs/bugs.md](docs/bugs.md). Don't fix bugs in passing — each entry has a scope and acceptance criteria.
 
 Test coverage:
 - **ABV parsing and comparison** — format variants, proof conversion, range validation

@@ -1,0 +1,11 @@
+{
+  "brand_name": "Alpine Peak",
+  "class_type": "Gin",
+  "abv": "40% Alc./Vol.",
+  "net_contents": "1500 mL",
+  "bottler_name": "Alpine Spirits",
+  "bottler_address": "Denver, CO",
+  "country_of_origin": "",
+  "is_import": false,
+  "reason": "1500 mL is not an approved TTB standard fill size (1750 mL is approved, not 1500)."
+}

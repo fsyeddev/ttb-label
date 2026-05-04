@@ -1,0 +1,11 @@
+{
+  "brand_name": "Fiesta Blue",
+  "class_type": "Blanco Tequila",
+  "abv": "40% Alc./Vol.",
+  "net_contents": "2000 mL",
+  "bottler_name": "Fiesta Imports",
+  "bottler_address": "San Diego, CA",
+  "country_of_origin": "Mexico",
+  "is_import": true,
+  "reason": "2000 mL is not an approved TTB standard fill size."
+}

@@ -1,0 +1,1042 @@
+[
+  {
+    "id": "01-pass-01",
+    "category": 1,
+    "description": "Clean, fully compliant Kentucky Straight Bourbon",
+    "form_data": {
+      "brand_name": "Old Cypress Distillery",
+      "class_type": "Kentucky Straight Bourbon Whiskey",
+      "abv": "45% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Old Cypress Distillery",
+      "bottler_address": "Louisville, KY",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic image of a clear glass liquor bottle with a rectangular front label. Visual style: vintage bourbon label, gold and black, ornate typography. Verbatim text to include exactly: 'Old Cypress Distillery', 'Kentucky Straight Bourbon Whiskey', '45% Alc./Vol.', '750 mL', 'Distilled and bottled by Old Cypress Distillery, Louisville, KY'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "01-pass-02",
+    "category": 1,
+    "description": "Clean, fully compliant imported Scotch Whisky",
+    "form_data": {
+      "brand_name": "Highland Crest",
+      "class_type": "Scotch Whisky",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "700 mL",
+      "bottler_name": "Highland Crest Distillers",
+      "bottler_address": "Glasgow, Scotland",
+      "country_of_origin": "Scotland",
+      "is_import": true
+    },
+    "image_prompt": "Photorealistic Scotch bottle with a classy, minimalist white and silver label. Verbatim text to include exactly: 'Highland Crest', 'Scotch Whisky', '40% Alc./Vol.', '700 mL', 'Imported by Highland Crest Imports, New York, NY', 'Product of Scotland'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "01-pass-03",
+    "category": 1,
+    "description": "Clean, fully compliant Vodka",
+    "form_data": {
+      "brand_name": "Frostweaver",
+      "class_type": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "1000 mL",
+      "bottler_name": "Frostweaver Spirits",
+      "bottler_address": "Denver, CO",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic frosted glass bottle with an icy blue and white modern label. Verbatim text to include exactly: 'Frostweaver', 'Vodka', '40% Alc./Vol.', '1000 mL', 'Produced and bottled by Frostweaver Spirits, Denver, CO'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "01-pass-04",
+    "category": 1,
+    "description": "Clean, fully compliant Blanco Tequila (Import)",
+    "form_data": {
+      "brand_name": "Sol de Jalisco",
+      "class_type": "Blanco Tequila",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Agave Masters",
+      "bottler_address": "Tequila, Jalisco, Mexico",
+      "country_of_origin": "Mexico",
+      "is_import": true
+    },
+    "image_prompt": "Photorealistic stout glass bottle with a vibrant, colorful Mexican folk art label. Verbatim text to include exactly: 'Sol de Jalisco', 'Blanco Tequila', '40% Alc./Vol.', '750 mL', 'Imported by Agave Masters Imports, Austin, TX', 'Product of Mexico'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "01-pass-05",
+    "category": 1,
+    "description": "Clean, fully compliant Light Rum",
+    "form_data": {
+      "brand_name": "Trade Winds",
+      "class_type": "Light Rum",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "1750 mL",
+      "bottler_name": "Trade Winds Distilling",
+      "bottler_address": "Miami, FL",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic large clear glass handle-bottle with a tropical-themed label. Verbatim text to include exactly: 'Trade Winds', 'Light Rum', '40% Alc./Vol.', '1750 mL', 'Distilled and bottled by Trade Winds Distilling, Miami, FL'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "01-pass-06",
+    "category": 1,
+    "description": "Clean, fully compliant London Dry Gin",
+    "form_data": {
+      "brand_name": "Botanist's Secret",
+      "class_type": "London Dry Gin",
+      "abv": "47% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Secret Spirits Ltd.",
+      "bottler_address": "Portland, OR",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic dark green glass bottle with an elegant, botanical illustration label. Verbatim text to include exactly: 'Botanist\\'s Secret', 'London Dry Gin', '47% Alc./Vol.', '750 mL', 'Produced and bottled by Secret Spirits Ltd., Portland, OR'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "01-pass-07",
+    "category": 1,
+    "description": "Clean, fully compliant Liqueur with proper composition statement",
+    "form_data": {
+      "brand_name": "Velvet Orchard",
+      "class_type": "Cherry Liqueur",
+      "abv": "20% Alc./Vol.",
+      "net_contents": "375 mL",
+      "bottler_name": "Orchard Spirits",
+      "bottler_address": "Traverse City, MI",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic slim glass bottle with a dark red liqueur, featuring a romantic, script-heavy label. Verbatim text to include exactly: 'Velvet Orchard', 'Cherry Liqueur', 'Made with natural cherry flavors and neutral spirits', '20% Alc./Vol.', '375 mL', 'Produced and bottled by Orchard Spirits, Traverse City, MI'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "01-pass-08",
+    "category": 1,
+    "description": "Clean, fully compliant Cognac (Import)",
+    "form_data": {
+      "brand_name": "Maison Delacroix",
+      "class_type": "Cognac",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Delacroix Freres",
+      "bottler_address": "Cognac, France",
+      "country_of_origin": "France",
+      "is_import": true
+    },
+    "image_prompt": "Photorealistic elegant bell-shaped bottle with a luxurious gold-foil accented label. Verbatim text to include exactly: 'Maison Delacroix', 'Cognac', '40% Alc./Vol.', '750 mL', 'Imported by Delacroix USA, Boston, MA', 'Product of France'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "01-pass-09",
+    "category": 1,
+    "description": "Clean, fully compliant Brandy",
+    "form_data": {
+      "brand_name": "Copper Peak",
+      "class_type": "Brandy",
+      "abv": "35% Alc./Vol.",
+      "net_contents": "500 mL",
+      "bottler_name": "Copper Peak Vineyards",
+      "bottler_address": "Napa, CA",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic tall clear bottle with amber liquid, featuring a rustic paper label. Verbatim text to include exactly: 'Copper Peak', 'Brandy', '35% Alc./Vol.', '500 mL', 'Distilled and bottled by Copper Peak Vineyards, Napa, CA'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "01-pass-10",
+    "category": 1,
+    "description": "Clean, fully compliant Rye Whiskey",
+    "form_data": {
+      "brand_name": "Iron Forge",
+      "class_type": "Rye Whiskey",
+      "abv": "45% Alc./Vol.",
+      "net_contents": "200 mL",
+      "bottler_name": "Iron Forge Spirits",
+      "bottler_address": "Pittsburgh, PA",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic small flask-style clear glass bottle with a bold, industrial-style label. Verbatim text to include exactly: 'Iron Forge', 'Rye Whiskey', 'Aged 4 Years', '45% Alc./Vol.', '200 mL', 'Distilled and bottled by Iron Forge Spirits, Pittsburgh, PA'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "All 8 fields PASS, 0 advisories, overall PASS"
+  },
+  {
+    "id": "02-mismatch-01",
+    "category": 2,
+    "description": "JSON wrong brand name, label correct",
+    "form_data": {
+      "brand_name": "Wrong Brand Name",
+      "class_type": "Tennessee Whiskey",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Smoky Hollow Distillery",
+      "bottler_address": "Nashville, TN",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic square glass bottle with a black and white classic label. Verbatim text to include exactly: 'Smoky Hollow', 'Tennessee Whiskey', '40% Alc./Vol.', '750 mL', 'Distilled and bottled by Smoky Hollow Distillery, Nashville, TN'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (Brand mismatch)"
+  },
+  {
+    "id": "02-mismatch-02",
+    "category": 2,
+    "description": "JSON wrong class type, label correct",
+    "form_data": {
+      "brand_name": "Silver Crest",
+      "class_type": "Gin",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Silver Crest Spirits",
+      "bottler_address": "Seattle, WA",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic tall cylindrical bottle with a crisp, modern silver label. Verbatim text to include exactly: 'Silver Crest', 'Vodka', '40% Alc./Vol.', '750 mL', 'Distilled and bottled by Silver Crest Spirits, Seattle, WA'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (Class mismatch)"
+  },
+  {
+    "id": "02-mismatch-03",
+    "category": 2,
+    "description": "JSON wrong ABV, label correct",
+    "form_data": {
+      "brand_name": "Island Bounty",
+      "class_type": "Spiced Rum",
+      "abv": "35% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Island Bounty Co.",
+      "bottler_address": "Key West, FL",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic dark glass rum bottle with a nautical, pirate-themed label. Verbatim text to include exactly: 'Island Bounty', 'Spiced Rum', 'Rum with natural spices', '40% Alc./Vol.', '750 mL', 'Produced and bottled by Island Bounty Co., Key West, FL'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (ABV mismatch)"
+  },
+  {
+    "id": "02-mismatch-04",
+    "category": 2,
+    "description": "JSON wrong net contents, label correct",
+    "form_data": {
+      "brand_name": "Glacier Point",
+      "class_type": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "1000 mL",
+      "bottler_name": "Glacier Distillers",
+      "bottler_address": "Anchorage, AK",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic clear glass bottle with a minimalist ice-themed label. Verbatim text to include exactly: 'Glacier Point', 'Vodka', '40% Alc./Vol.', '750 mL', 'Distilled and bottled by Glacier Distillers, Anchorage, AK'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (Net contents mismatch)"
+  },
+  {
+    "id": "02-mismatch-05",
+    "category": 2,
+    "description": "JSON wrong bottler name, label correct",
+    "form_data": {
+      "brand_name": "Prairie Wind",
+      "class_type": "Straight Bourbon Whiskey",
+      "abv": "45% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Wrong Distilling Co.",
+      "bottler_address": "Omaha, NE",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic heavy glass bottle with a rustic, frontier-style label. Verbatim text to include exactly: 'Prairie Wind', 'Straight Bourbon Whiskey', '45% Alc./Vol.', '750 mL', 'Distilled and bottled by Prairie Wind Distilling Co., Omaha, NE'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (Bottler mismatch)"
+  },
+  {
+    "id": "02-mismatch-06",
+    "category": 2,
+    "description": "JSON wrong bottler address, label correct",
+    "form_data": {
+      "brand_name": "City Lights",
+      "class_type": "Gin",
+      "abv": "42% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "City Lights Spirits",
+      "bottler_address": "Los Angeles, CA",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic sleek tall bottle with an art deco label. Verbatim text to include exactly: 'City Lights', 'Gin', '42% Alc./Vol.', '750 mL', 'Produced and bottled by City Lights Spirits, New York, NY'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (Address mismatch)"
+  },
+  {
+    "id": "02-mismatch-07",
+    "category": 2,
+    "description": "JSON wrong country of origin, label correct",
+    "form_data": {
+      "brand_name": "Celtic Whisper",
+      "class_type": "Irish Whiskey",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Celtic Spirits",
+      "bottler_address": "Dublin, Ireland",
+      "country_of_origin": "Scotland",
+      "is_import": true
+    },
+    "image_prompt": "Photorealistic dark green glass bottle with a gold-trimmed traditional Irish label. Verbatim text to include exactly: 'Celtic Whisper', 'Irish Whiskey', '40% Alc./Vol.', '750 mL', 'Imported by Celtic USA, Boston, MA', 'Product of Ireland'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (Country mismatch)"
+  },
+  {
+    "id": "02-mismatch-08",
+    "category": 2,
+    "description": "JSON wrong brand name (again), label correct",
+    "form_data": {
+      "brand_name": "Desert Sun",
+      "class_type": "Blanco Tequila",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Agave Brothers",
+      "bottler_address": "Tequila, Jalisco, Mexico",
+      "country_of_origin": "Mexico",
+      "is_import": true
+    },
+    "image_prompt": "Photorealistic artisanal glass bottle with a bright yellow and red label. Verbatim text to include exactly: 'Desert Moon', 'Blanco Tequila', '40% Alc./Vol.', '750 mL', 'Imported by Agave Brothers, Phoenix, AZ', 'Product of Mexico'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (Brand mismatch)"
+  },
+  {
+    "id": "02-mismatch-09",
+    "category": 2,
+    "description": "JSON wrong ABV (again), label correct",
+    "form_data": {
+      "brand_name": "Blackstone",
+      "class_type": "Bourbon Whiskey",
+      "abv": "50% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Blackstone Distilling",
+      "bottler_address": "Lexington, KY",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic dark amber liquid in a rugged square bottle with a black label. Verbatim text to include exactly: 'Blackstone', 'Bourbon Whiskey', '45% Alc./Vol.', '750 mL', 'Distilled and bottled by Blackstone Distilling, Lexington, KY'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (ABV mismatch)"
+  },
+  {
+    "id": "02-mismatch-10",
+    "category": 2,
+    "description": "JSON wrong class type (again), label correct",
+    "form_data": {
+      "brand_name": "Orchard Hills",
+      "class_type": "Brandy",
+      "abv": "35% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Orchard Hills Distillery",
+      "bottler_address": "Salem, OR",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic clear bottle with golden liquid, featuring a rustic fruit-themed label. Verbatim text to include exactly: 'Orchard Hills', 'Apple Flavored Brandy', '35% Alc./Vol.', '750 mL', 'Produced and bottled by Orchard Hills Distillery, Salem, OR'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL on cross-validation (Class mismatch)"
+  },
+  {
+    "id": "03-noncompliant-01",
+    "category": 3,
+    "description": "Label non-compliant: non-approved bottle size (800 mL)",
+    "form_data": {
+      "brand_name": "Crestview",
+      "class_type": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "800 mL",
+      "bottler_name": "Crestview Spirits",
+      "bottler_address": "Denver, CO",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic frosted bottle with a crisp white label. Verbatim text to include exactly: 'Crestview', 'Vodka', '40% Alc./Vol.', '800 mL', 'Distilled and bottled by Crestview Spirits, Denver, CO'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Net contents 800 mL not approved)"
+  },
+  {
+    "id": "03-noncompliant-02",
+    "category": 3,
+    "description": "Label non-compliant: missing age statement on young whisky",
+    "form_data": {
+      "brand_name": "River Run",
+      "class_type": "Straight Bourbon Whiskey",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "River Run Distilling",
+      "bottler_address": "Frankfort, KY",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic glass bottle with a classic vintage label. Verbatim text to include exactly: 'River Run', 'Straight Bourbon Whiskey', '40% Alc./Vol.', '750 mL', 'Distilled and bottled by River Run Distilling, Frankfort, KY'. (Note: strictly no age statement included). Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Missing age statement for whisky under 4 years)"
+  },
+  {
+    "id": "03-noncompliant-03",
+    "category": 3,
+    "description": "Label non-compliant: missing composition statement on liqueur",
+    "form_data": {
+      "brand_name": "Fireglow",
+      "class_type": "Cinnamon Liqueur",
+      "abv": "33% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Fireglow Spirits",
+      "bottler_address": "Austin, TX",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic clear bottle filled with red liquid, featuring a fiery modern label. Verbatim text to include exactly: 'Fireglow', 'Cinnamon Liqueur', '33% Alc./Vol.', '750 mL', 'Produced and bottled by Fireglow Spirits, Austin, TX'. (Note: strictly no composition statement included). Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Missing statement of composition)"
+  },
+  {
+    "id": "03-noncompliant-04",
+    "category": 3,
+    "description": "Label non-compliant: missing state of distillation",
+    "form_data": {
+      "brand_name": "Oak & Iron",
+      "class_type": "Straight Bourbon Whiskey",
+      "abv": "45% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Oak & Iron Distillers",
+      "bottler_address": "Brooklyn, NY",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic thick glass bottle with a dark, industrial label. Verbatim text to include exactly: 'Oak & Iron', 'Straight Bourbon Whiskey', '45% Alc./Vol.', '750 mL', 'Bottled by Oak & Iron Distillers, Brooklyn, NY'. (Note: strictly no state of distillation included). Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Missing state of distillation for straight whiskey)"
+  },
+  {
+    "id": "03-noncompliant-05",
+    "category": 3,
+    "description": "Label non-compliant: bad production phrasing",
+    "form_data": {
+      "brand_name": "Pine Valley",
+      "class_type": "Gin",
+      "abv": "43% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Pine Valley Co.",
+      "bottler_address": "Bend, OR",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic green glass bottle with a forest-themed label. Verbatim text to include exactly: 'Pine Valley', 'Gin', '43% Alc./Vol.', '750 mL', 'Crafted by Pine Valley Co., Bend, OR'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance ('Crafted by' is non-standard phrasing)"
+  },
+  {
+    "id": "03-noncompliant-06",
+    "category": 3,
+    "description": "Label non-compliant: fanciful class type",
+    "form_data": {
+      "brand_name": "Golden Stallion",
+      "class_type": "Premium Reserve",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Stallion Spirits",
+      "bottler_address": "Dallas, TX",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic amber liquid in a horse-shaped bottle with a gold label. Verbatim text to include exactly: 'Golden Stallion', 'Premium Reserve', '40% Alc./Vol.', '750 mL', 'Produced and bottled by Stallion Spirits, Dallas, TX'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Fanciful class 'Premium Reserve')"
+  },
+  {
+    "id": "03-noncompliant-07",
+    "category": 3,
+    "description": "Label non-compliant: non-approved bottle size (250 mL)",
+    "form_data": {
+      "brand_name": "Sunset Cove",
+      "class_type": "Rum",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "250 mL",
+      "bottler_name": "Cove Distillers",
+      "bottler_address": "Honolulu, HI",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic small glass bottle with a beach sunset label. Verbatim text to include exactly: 'Sunset Cove', 'Rum', '40% Alc./Vol.', '250 mL', 'Distilled and bottled by Cove Distillers, Honolulu, HI'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Net contents 250 mL not approved)"
+  },
+  {
+    "id": "03-noncompliant-08",
+    "category": 3,
+    "description": "Label non-compliant: bad production phrasing 'Made by'",
+    "form_data": {
+      "brand_name": "Copper Kettle",
+      "class_type": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Kettle Spirits",
+      "bottler_address": "Chicago, IL",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic rustic clear glass bottle with a minimalist label. Verbatim text to include exactly: 'Copper Kettle', 'Vodka', '40% Alc./Vol.', '750 mL', 'Made by Kettle Spirits, Chicago, IL'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance ('Made by' is non-standard phrasing)"
+  },
+  {
+    "id": "03-noncompliant-09",
+    "category": 3,
+    "description": "Label non-compliant: missing state of distillation on Straight Rye",
+    "form_data": {
+      "brand_name": "Liberty Bell",
+      "class_type": "Straight Rye Whiskey",
+      "abv": "45% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Liberty Distilling",
+      "bottler_address": "Philadelphia, PA",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic antique-style glass bottle with a parchment label. Verbatim text to include exactly: 'Liberty Bell', 'Straight Rye Whiskey', '45% Alc./Vol.', '750 mL', 'Bottled by Liberty Distilling, Philadelphia, PA'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Missing state of distillation)"
+  },
+  {
+    "id": "03-noncompliant-10",
+    "category": 3,
+    "description": "Label non-compliant: fanciful class type 'Midnight Blend'",
+    "form_data": {
+      "brand_name": "Shadow Peak",
+      "class_type": "Midnight Blend",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Shadow Peak Spirits",
+      "bottler_address": "Boulder, CO",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic dark opaque glass bottle with a black and silver label. Verbatim text to include exactly: 'Shadow Peak', 'Midnight Blend', '40% Alc./Vol.', '750 mL', 'Produced and bottled by Shadow Peak Spirits, Boulder, CO'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Fanciful class 'Midnight Blend')"
+  },
+  {
+    "id": "04-noncompliant-01",
+    "category": 4,
+    "description": "Non-compliant matching JSON: bottle size 400 mL",
+    "form_data": {
+      "brand_name": "Amber Wave",
+      "class_type": "Bourbon Whiskey",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "400 mL",
+      "bottler_name": "Wave Distillers",
+      "bottler_address": "Omaha, NE",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "400 mL is not an approved TTB standard fill size."
+    },
+    "image_prompt": "Photorealistic medium glass bottle with a rustic orange label. Verbatim text to include exactly: 'Amber Wave', 'Bourbon Whiskey', '40% Alc./Vol.', '400 mL', 'Distilled and bottled by Wave Distillers, Omaha, NE'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-02",
+    "category": 4,
+    "description": "Non-compliant matching JSON: bottle size 600 mL",
+    "form_data": {
+      "brand_name": "Clearwater",
+      "class_type": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "600 mL",
+      "bottler_name": "Clearwater Spirits",
+      "bottler_address": "Duluth, MN",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "600 mL is not an approved TTB standard fill size."
+    },
+    "image_prompt": "Photorealistic sleek clear bottle with a light blue label. Verbatim text to include exactly: 'Clearwater', 'Vodka', '40% Alc./Vol.', '600 mL', 'Produced and bottled by Clearwater Spirits, Duluth, MN'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-03",
+    "category": 4,
+    "description": "Non-compliant matching JSON: bottle size 800 mL",
+    "form_data": {
+      "brand_name": "Pirate's Gold",
+      "class_type": "Rum",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "800 mL",
+      "bottler_name": "Gold Coast Distillers",
+      "bottler_address": "Tampa, FL",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "800 mL is not an approved TTB standard fill size."
+    },
+    "image_prompt": "Photorealistic round glass bottle with a treasure map label. Verbatim text to include exactly: 'Pirate\\'s Gold', 'Rum', '40% Alc./Vol.', '800 mL', 'Distilled and bottled by Gold Coast Distillers, Tampa, FL'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-04",
+    "category": 4,
+    "description": "Non-compliant matching JSON: bottle size 1500 mL",
+    "form_data": {
+      "brand_name": "Alpine Peak",
+      "class_type": "Gin",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "1500 mL",
+      "bottler_name": "Alpine Spirits",
+      "bottler_address": "Denver, CO",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "1500 mL is not an approved TTB standard fill size (1750 mL is approved, not 1500)."
+    },
+    "image_prompt": "Photorealistic very large glass bottle with a snowy mountain label. Verbatim text to include exactly: 'Alpine Peak', 'Gin', '40% Alc./Vol.', '1500 mL', 'Distilled and bottled by Alpine Spirits, Denver, CO'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-05",
+    "category": 4,
+    "description": "Non-compliant matching JSON: bottle size 2000 mL",
+    "form_data": {
+      "brand_name": "Fiesta Blue",
+      "class_type": "Blanco Tequila",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "2000 mL",
+      "bottler_name": "Fiesta Imports",
+      "bottler_address": "San Diego, CA",
+      "country_of_origin": "Mexico",
+      "is_import": true,
+      "reason": "2000 mL is not an approved TTB standard fill size."
+    },
+    "image_prompt": "Photorealistic massive glass bottle with a vibrant blue and silver label. Verbatim text to include exactly: 'Fiesta Blue', 'Blanco Tequila', '40% Alc./Vol.', '2000 mL', 'Imported by Fiesta Imports, San Diego, CA', 'Product of Mexico'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-06",
+    "category": 4,
+    "description": "Non-compliant matching JSON: missing age statement on Bourbon",
+    "form_data": {
+      "brand_name": "Young Buck",
+      "class_type": "Bourbon Whiskey",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Buck Distillers",
+      "bottler_address": "Louisville, KY",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Whisky aged under 4 years requires an age statement on the label."
+    },
+    "image_prompt": "Photorealistic clear bottle with a deer-themed label. Verbatim text to include exactly: 'Young Buck', 'Bourbon Whiskey', '40% Alc./Vol.', '750 mL', 'Distilled and bottled by Buck Distillers, Louisville, KY'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-07",
+    "category": 4,
+    "description": "Non-compliant matching JSON: missing age statement on Rye",
+    "form_data": {
+      "brand_name": "Rebel Spirit",
+      "class_type": "Rye Whiskey",
+      "abv": "45% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Rebel Distilling",
+      "bottler_address": "Richmond, VA",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Whisky aged under 4 years requires an age statement on the label."
+    },
+    "image_prompt": "Photorealistic clear bottle with an edgy, torn-paper style label. Verbatim text to include exactly: 'Rebel Spirit', 'Rye Whiskey', '45% Alc./Vol.', '750 mL', 'Distilled and bottled by Rebel Distilling, Richmond, VA'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-08",
+    "category": 4,
+    "description": "Non-compliant matching JSON: missing age statement on Whisky",
+    "form_data": {
+      "brand_name": "Pioneer Trail",
+      "class_type": "Whisky",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Pioneer Co.",
+      "bottler_address": "Salt Lake City, UT",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Whisky aged under 4 years requires an age statement on the label."
+    },
+    "image_prompt": "Photorealistic rugged bottle with a covered wagon themed label. Verbatim text to include exactly: 'Pioneer Trail', 'Whisky', '40% Alc./Vol.', '750 mL', 'Produced and bottled by Pioneer Co., Salt Lake City, UT'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-09",
+    "category": 4,
+    "description": "Non-compliant matching JSON: missing statement of composition on Amaretto",
+    "form_data": {
+      "brand_name": "Bella Notte",
+      "class_type": "Amaretto",
+      "abv": "28% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Bella Spirits",
+      "bottler_address": "New York, NY",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Liqueurs and specialty spirits require a statement of composition."
+    },
+    "image_prompt": "Photorealistic classic Italian-style curved bottle with a romantic gold and black label. Verbatim text to include exactly: 'Bella Notte', 'Amaretto', '28% Alc./Vol.', '750 mL', 'Produced and bottled by Bella Spirits, New York, NY'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-10",
+    "category": 4,
+    "description": "Non-compliant matching JSON: missing statement of composition on Spiced Rum",
+    "form_data": {
+      "brand_name": "Black Anchor",
+      "class_type": "Spiced Rum",
+      "abv": "35% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Anchor Distillers",
+      "bottler_address": "Charleston, SC",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Spiced Rum requires a statement of composition."
+    },
+    "image_prompt": "Photorealistic dark glass bottle with an anchor motif label. Verbatim text to include exactly: 'Black Anchor', 'Spiced Rum', '35% Alc./Vol.', '750 mL', 'Produced and bottled by Anchor Distillers, Charleston, SC'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-11",
+    "category": 4,
+    "description": "Non-compliant matching JSON: missing statement of composition on Coffee Liqueur",
+    "form_data": {
+      "brand_name": "Midnight Roast",
+      "class_type": "Coffee Liqueur",
+      "abv": "20% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Roast Spirits Co.",
+      "bottler_address": "Seattle, WA",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Liqueurs require a statement of composition."
+    },
+    "image_prompt": "Photorealistic dark brown glass bottle with a coffee bean themed label. Verbatim text to include exactly: 'Midnight Roast', 'Coffee Liqueur', '20% Alc./Vol.', '750 mL', 'Produced and bottled by Roast Spirits Co., Seattle, WA'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-12",
+    "category": 4,
+    "description": "Non-compliant matching JSON: missing state of distillation on Straight Bourbon",
+    "form_data": {
+      "brand_name": "Iron Horse",
+      "class_type": "Straight Bourbon Whiskey",
+      "abv": "45% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Iron Horse Distillers",
+      "bottler_address": "Chicago, IL",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Straight whiskies require a state of distillation on the label."
+    },
+    "image_prompt": "Photorealistic clear glass bottle with a vintage train-themed label. Verbatim text to include exactly: 'Iron Horse', 'Straight Bourbon Whiskey', '45% Alc./Vol.', '750 mL', 'Bottled by Iron Horse Distillers, Chicago, IL'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-13",
+    "category": 4,
+    "description": "Non-compliant matching JSON: missing state of distillation on Straight Wheat Whiskey",
+    "form_data": {
+      "brand_name": "Golden Grain",
+      "class_type": "Straight Wheat Whiskey",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Grain Belt Spirits",
+      "bottler_address": "St. Louis, MO",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Straight whiskies require a state of distillation on the label."
+    },
+    "image_prompt": "Photorealistic clear bottle with a wheat stalk illustration on the label. Verbatim text to include exactly: 'Golden Grain', 'Straight Wheat Whiskey', '40% Alc./Vol.', '750 mL', 'Bottled by Grain Belt Spirits, St. Louis, MO'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-14",
+    "category": 4,
+    "description": "Non-compliant matching JSON: missing state of distillation on Straight Corn Whiskey",
+    "form_data": {
+      "brand_name": "Yellowstone Moon",
+      "class_type": "Straight Corn Whiskey",
+      "abv": "50% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Moonshine Masters",
+      "bottler_address": "Knoxville, TN",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Straight whiskies require a state of distillation on the label."
+    },
+    "image_prompt": "Photorealistic mason jar style bottle with a simple white label. Verbatim text to include exactly: 'Yellowstone Moon', 'Straight Corn Whiskey', '50% Alc./Vol.', '750 mL', 'Bottled by Moonshine Masters, Knoxville, TN'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-15",
+    "category": 4,
+    "description": "Non-compliant matching JSON: bad production phrasing 'Blended by'",
+    "form_data": {
+      "brand_name": "Harbor Mist",
+      "class_type": "Gin",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Harbor Distillers",
+      "bottler_address": "Boston, MA",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Production statement uses unapproved phrasing 'Blended by'."
+    },
+    "image_prompt": "Photorealistic frosted bottle with a foggy harbor illustration label. Verbatim text to include exactly: 'Harbor Mist', 'Gin', '40% Alc./Vol.', '750 mL', 'Blended by Harbor Distillers, Boston, MA'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-16",
+    "category": 4,
+    "description": "Non-compliant matching JSON: bad production phrasing 'Vatted by'",
+    "form_data": {
+      "brand_name": "Old Cask",
+      "class_type": "Brandy",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Cask & Co.",
+      "bottler_address": "Fresno, CA",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Production statement uses unapproved phrasing 'Vatted by'."
+    },
+    "image_prompt": "Photorealistic amber glass bottle with a wood barrel textured label. Verbatim text to include exactly: 'Old Cask', 'Brandy', '40% Alc./Vol.', '750 mL', 'Vatted by Cask & Co., Fresno, CA'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-17",
+    "category": 4,
+    "description": "Non-compliant matching JSON: bad production phrasing 'Artisanally crafted by'",
+    "form_data": {
+      "brand_name": "Silver Leaf",
+      "class_type": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Leaf Spirits",
+      "bottler_address": "Portland, OR",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Production statement uses unapproved phrasing 'Artisanally crafted by'."
+    },
+    "image_prompt": "Photorealistic slim elegant clear bottle with a silver foil leaf label. Verbatim text to include exactly: 'Silver Leaf', 'Vodka', '40% Alc./Vol.', '750 mL', 'Artisanally crafted by Leaf Spirits, Portland, OR'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-18",
+    "category": 4,
+    "description": "Non-compliant matching JSON: fanciful name in class field 'Volcano Fire'",
+    "form_data": {
+      "brand_name": "Lava Rock",
+      "class_type": "Volcano Fire",
+      "abv": "35% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Island Distillers",
+      "bottler_address": "Hilo, HI",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Fanciful or invented designations like 'Volcano Fire' are not approved classes."
+    },
+    "image_prompt": "Photorealistic dark textured glass bottle with a red and orange glowing label. Verbatim text to include exactly: 'Lava Rock', 'Volcano Fire', '35% Alc./Vol.', '750 mL', 'Produced and bottled by Island Distillers, Hilo, HI'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-19",
+    "category": 4,
+    "description": "Non-compliant matching JSON: fanciful name in class field 'Ocean Breeze'",
+    "form_data": {
+      "brand_name": "Coral Reef",
+      "class_type": "Ocean Breeze",
+      "abv": "20% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Reef Spirits",
+      "bottler_address": "Miami, FL",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Fanciful or invented designations like 'Ocean Breeze' are not approved classes."
+    },
+    "image_prompt": "Photorealistic blue tinted bottle with a tropical fish themed label. Verbatim text to include exactly: 'Coral Reef', 'Ocean Breeze', '20% Alc./Vol.', '750 mL', 'Produced and bottled by Reef Spirits, Miami, FL'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "04-noncompliant-20",
+    "category": 4,
+    "description": "Non-compliant matching JSON: fanciful name in class field 'Mountain Ice'",
+    "form_data": {
+      "brand_name": "Summit",
+      "class_type": "Mountain Ice",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Summit Distilling",
+      "bottler_address": "Denver, CO",
+      "country_of_origin": "",
+      "is_import": false,
+      "reason": "Fanciful or invented designations like 'Mountain Ice' are not approved classes."
+    },
+    "image_prompt": "Photorealistic clear bottle with a stark white and silver mountain peak label. Verbatim text to include exactly: 'Summit', 'Mountain Ice', '40% Alc./Vol.', '750 mL', 'Produced and bottled by Summit Distilling, Denver, CO'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance with reason provided"
+  },
+  {
+    "id": "05-warning-bad-01",
+    "category": 5,
+    "description": "Government warning completely missing",
+    "form_data": {
+      "brand_name": "Ghost Pine",
+      "class_type": "Gin",
+      "abv": "45% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Ghost Pine Spirits",
+      "bottler_address": "Savannah, GA",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic clear glass bottle with a minimalist black and white label. Verbatim text to include exactly: 'Ghost Pine', 'Gin', '45% Alc./Vol.', '750 mL', 'Distilled and bottled by Ghost Pine Spirits, Savannah, GA'. (Note: strictly DO NOT include any government warning text).",
+    "expected_behavior": "FAIL compliance (Government warning missing)"
+  },
+  {
+    "id": "05-warning-bad-02",
+    "category": 5,
+    "description": "Government warning title case 'Government Warning'",
+    "form_data": {
+      "brand_name": "Copper Fox",
+      "class_type": "Bourbon Whiskey",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Fox Distillers",
+      "bottler_address": "Lexington, KY",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic amber glass bottle with a fox illustration label. Verbatim text to include exactly: 'Copper Fox', 'Bourbon Whiskey', '40% Alc./Vol.', '750 mL', 'Distilled and bottled by Fox Distillers, Lexington, KY'. Include a separate paragraph in small print: 'Government Warning: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Government Warning not in ALL CAPS)"
+  },
+  {
+    "id": "05-warning-bad-03",
+    "category": 5,
+    "description": "Government warning partial (first sentence only)",
+    "form_data": {
+      "brand_name": "Silver Anchor",
+      "class_type": "Rum",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Anchor Bay Spirits",
+      "bottler_address": "Newport, RI",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic clear glass bottle with a nautical silver label. Verbatim text to include exactly: 'Silver Anchor', 'Rum', '40% Alc./Vol.', '750 mL', 'Distilled and bottled by Anchor Bay Spirits, Newport, RI'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects.'",
+    "expected_behavior": "FAIL compliance (Incomplete government warning)"
+  },
+  {
+    "id": "05-warning-bad-04",
+    "category": 5,
+    "description": "Government warning completely wrong wording",
+    "form_data": {
+      "brand_name": "Winter Sky",
+      "class_type": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Sky Distilling",
+      "bottler_address": "Fargo, ND",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic tall frosted bottle with a starry night label. Verbatim text to include exactly: 'Winter Sky', 'Vodka', '40% Alc./Vol.', '750 mL', 'Produced and bottled by Sky Distilling, Fargo, ND'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: Drinking alcohol is harmful to your health and impairs driving. Pregnant women should not drink.'",
+    "expected_behavior": "FAIL compliance (Non-statutory warning text)"
+  },
+  {
+    "id": "05-warning-bad-05",
+    "category": 5,
+    "description": "Government warning tiny illegible text",
+    "form_data": {
+      "brand_name": "Desert Rose",
+      "class_type": "Blanco Tequila",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Rose Imports",
+      "bottler_address": "Phoenix, AZ",
+      "country_of_origin": "Mexico",
+      "is_import": true
+    },
+    "image_prompt": "Photorealistic artisanal clear bottle with a vibrant pink rose label. Verbatim text to include exactly: 'Desert Rose', 'Blanco Tequila', '40% Alc./Vol.', '750 mL', 'Imported by Rose Imports, Phoenix, AZ', 'Product of Mexico'. Include a separate paragraph in a ridiculously tiny, smudged, unreadable 2-point font at the very bottom edge: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Warning text illegible/too small)"
+  },
+  {
+    "id": "06-warning-sneaky-01",
+    "category": 6,
+    "description": "Sneaky warning: 'could cause' instead of 'may cause'",
+    "form_data": {
+      "brand_name": "Maple Ridge",
+      "class_type": "Bourbon Whiskey",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Ridge Distilling",
+      "bottler_address": "Burlington, VT",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic glass bottle with a woodgrain textured label. Verbatim text to include exactly: 'Maple Ridge', 'Bourbon Whiskey', '40% Alc./Vol.', '750 mL', 'Distilled and bottled by Ridge Distilling, Burlington, VT'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and could cause health problems.'",
+    "expected_behavior": "FAIL compliance (Exact warning text mismatch)"
+  },
+  {
+    "id": "06-warning-sneaky-02",
+    "category": 6,
+    "description": "Sneaky warning: missing numbered clause '(1)'",
+    "form_data": {
+      "brand_name": "Ironclad",
+      "class_type": "Rye Whiskey",
+      "abv": "45% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Ironclad Spirits",
+      "bottler_address": "Baltimore, MD",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic dark glass bottle with a riveted metal style label. Verbatim text to include exactly: 'Ironclad', 'Rye Whiskey', '45% Alc./Vol.', '750 mL', 'Distilled and bottled by Ironclad Spirits, Baltimore, MD'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Exact warning text mismatch)"
+  },
+  {
+    "id": "06-warning-sneaky-03",
+    "category": 6,
+    "description": "Sneaky warning: 'a Surgeon General' instead of 'the Surgeon General'",
+    "form_data": {
+      "brand_name": "Velvet Sky",
+      "class_type": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Sky Spirits",
+      "bottler_address": "Los Angeles, CA",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic tall sleek bottle with a dark blue velvet label. Verbatim text to include exactly: 'Velvet Sky', 'Vodka', '40% Alc./Vol.', '750 mL', 'Produced and bottled by Sky Spirits, Los Angeles, CA'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to a Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Exact warning text mismatch)"
+  },
+  {
+    "id": "06-warning-sneaky-04",
+    "category": 6,
+    "description": "Sneaky warning: 'alcohol beverages' instead of 'alcoholic beverages' in first sentence",
+    "form_data": {
+      "brand_name": "Crimson Sail",
+      "class_type": "Rum",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Crimson Distillers",
+      "bottler_address": "Key West, FL",
+      "country_of_origin": "",
+      "is_import": false
+    },
+    "image_prompt": "Photorealistic clear glass bottle with a red ship sail label. Verbatim text to include exactly: 'Crimson Sail', 'Rum', '40% Alc./Vol.', '750 mL', 'Distilled and bottled by Crimson Distillers, Key West, FL'. Include a separate paragraph in small print: 'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcohol beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Exact warning text mismatch)"
+  },
+  {
+    "id": "06-warning-sneaky-05",
+    "category": 6,
+    "description": "Sneaky warning: missing colon after GOVERNMENT WARNING",
+    "form_data": {
+      "brand_name": "Emerald Isle",
+      "class_type": "Irish Whiskey",
+      "abv": "40% Alc./Vol.",
+      "net_contents": "750 mL",
+      "bottler_name": "Emerald Imports",
+      "bottler_address": "Boston, MA",
+      "country_of_origin": "Ireland",
+      "is_import": true
+    },
+    "image_prompt": "Photorealistic dark green glass bottle with an ornate Celtic knot label. Verbatim text to include exactly: 'Emerald Isle', 'Irish Whiskey', '40% Alc./Vol.', '750 mL', 'Imported by Emerald Imports, Boston, MA', 'Product of Ireland'. Include a separate paragraph in small print: 'GOVERNMENT WARNING (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'",
+    "expected_behavior": "FAIL compliance (Exact warning text mismatch)"
+  }
+]
