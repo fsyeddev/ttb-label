@@ -200,6 +200,34 @@ export default function ApplicationForm({ data, onChange }: ApplicationFormProps
             This is an imported product (country of origin required)
           </label>
         </div>
+
+        {/* Optional age in years — drives the whisky aging advisory (27 CFR 5.40).
+            Only relevant for whisky aged under 4 years; left blank otherwise. */}
+        <div>
+          <label htmlFor="aged-years" className="block text-base font-medium text-gray-800 mb-1">
+            Aged Years <span className="text-gray-400 font-normal">(optional, whisky only)</span>
+          </label>
+          <p className="text-xs text-gray-500 mb-1.5">
+            For whisky aged under 4 years, enter the age here. The system will check the label for
+            an age statement (27 CFR 5.40). Leave blank otherwise.
+          </p>
+          <input
+            id="aged-years"
+            type="number"
+            min={0}
+            step={1}
+            value={data.aged_years ?? ''}
+            onChange={(e) => {
+              const v = e.target.value;
+              onChange({
+                ...data,
+                aged_years: v === '' ? undefined : Number(v),
+              });
+            }}
+            placeholder="e.g. 2"
+            className={`${INPUT_BASE} border-gray-300 bg-white hover:border-gray-400 max-w-50`}
+          />
+        </div>
       </div>
     </div>
   );

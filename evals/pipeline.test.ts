@@ -33,7 +33,7 @@ const FIXTURES: Fixture[] = [
   importMissingOrigin,
 ] as Fixture[];
 
-function getOverall(fields: ReturnType<typeof validateSpiritsLabel>): OverallStatus {
+function getOverall(fields: { status: FieldStatus }[]): OverallStatus {
   if (fields.some((f) => f.status === 'fail')) return 'FAIL';
   if (fields.some((f) => f.status === 'warning')) return 'REVIEW';
   return 'PASS';
@@ -42,7 +42,7 @@ function getOverall(fields: ReturnType<typeof validateSpiritsLabel>): OverallSta
 describe('Validation pipeline — fixture-based eval', () => {
   for (const fixture of FIXTURES) {
     it(`[${fixture.id}] ${fixture.description}`, () => {
-      const fields = validateSpiritsLabel(fixture.formData, fixture.mockExtraction);
+      const { fields } = validateSpiritsLabel(fixture.formData, fixture.mockExtraction);
       const overall = getOverall(fields);
 
       // Check overall status
@@ -90,25 +90,25 @@ describe('Validation pipeline — edge cases', () => {
   };
 
   it('passes a fully matching label', () => {
-    const fields = validateSpiritsLabel(baseForm, baseExtraction);
+    const { fields } = validateSpiritsLabel(baseForm, baseExtraction);
     const allPass = fields.every((f) => f.status === 'pass');
     expect(allPass).toBe(true);
   });
 
   it('fails when ABV is completely missing from label', () => {
-    const fields = validateSpiritsLabel(baseForm, { ...baseExtraction, abv: null });
+    const { fields } = validateSpiritsLabel(baseForm, { ...baseExtraction, abv: null });
     const abv = fields.find((f) => f.field === 'abv');
     expect(abv?.status).toBe('fail');
   });
 
   it('fails when net contents is missing from label', () => {
-    const fields = validateSpiritsLabel(baseForm, { ...baseExtraction, net_contents: null });
+    const { fields } = validateSpiritsLabel(baseForm, { ...baseExtraction, net_contents: null });
     const nc = fields.find((f) => f.field === 'net_contents');
     expect(nc?.status).toBe('fail');
   });
 
   it('handles 1L vs 1000mL as matching net contents', () => {
-    const fields = validateSpiritsLabel(
+    const { fields } = validateSpiritsLabel(
       { ...baseForm, net_contents: '1 L' },
       { ...baseExtraction, net_contents: '1000 mL' }
     );
@@ -117,7 +117,7 @@ describe('Validation pipeline — edge cases', () => {
   });
 
   it('proof/percent conversion: 80 Proof matches 40% ABV', () => {
-    const fields = validateSpiritsLabel(
+    const { fields } = validateSpiritsLabel(
       { ...baseForm, abv: '40% Alc./Vol.' },
       { ...baseExtraction, abv: '80 Proof' }
     );
@@ -126,7 +126,7 @@ describe('Validation pipeline — edge cases', () => {
   });
 
   it('domestic product gets pass for country of origin regardless', () => {
-    const fields = validateSpiritsLabel(
+    const { fields } = validateSpiritsLabel(
       { ...baseForm, is_import: false },
       { ...baseExtraction, country_of_origin: null }
     );
@@ -135,11 +135,69 @@ describe('Validation pipeline — edge cases', () => {
   });
 
   it('import without country_of_origin on label fails', () => {
-    const fields = validateSpiritsLabel(
+    const { fields } = validateSpiritsLabel(
       { ...baseForm, is_import: true, country_of_origin: 'France' },
       { ...baseExtraction, country_of_origin: null }
     );
     const coo = fields.find((f) => f.field === 'country_of_origin');
     expect(coo?.status).toBe('fail');
+  });
+});
+
+// ─── Compliance advisories — pipeline interaction ────────────────────────────
+//
+// These verify the architectural rule that advisories never affect the
+// PASS/FAIL/REVIEW headline. A green PASS coexisting with multiple advisories
+// is the desired outcome; a FAIL with advisories is independent.
+
+describe('Validation pipeline — advisories never affect overall status', () => {
+  const baseForm: ApplicationData = {
+    brand_name: 'Test Brand',
+    class_type: 'Vodka',
+    abv: '40% Alc./Vol.',
+    net_contents: '750 mL',
+    bottler_name: 'Test Bottler',
+    bottler_address: 'Test City, TX 75001',
+    country_of_origin: 'USA',
+    is_import: false,
+  };
+
+  const baseExtraction: ExtractionResult = {
+    brand_name: 'Test Brand',
+    class_type: 'Vodka',
+    abv: '40% Alc./Vol.',
+    net_contents: '750 mL',
+    bottler_name: 'Test Bottler',
+    bottler_address: 'Test City, TX 75001',
+    country_of_origin: 'USA',
+    government_warning:
+      'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.',
+    production_statement: 'Distilled by Test Bottler',
+    confidence: 'high',
+  };
+
+  it('pipeline_passing_label_with_one_advisory — green PASS coexists with non-standard bottle size', () => {
+    const { fields, advisories } = validateSpiritsLabel(
+      { ...baseForm, net_contents: '600 mL' },
+      { ...baseExtraction, net_contents: '600 mL' }
+    );
+    expect(getOverall(fields)).toBe('PASS');
+    expect(advisories.some((a) => a.id === 'bottle-size-non-standard')).toBe(true);
+  });
+
+  it('pipeline_failing_label_with_advisories_independent — FAIL coexists with advisories without contamination', () => {
+    const { fields, advisories } = validateSpiritsLabel(
+      { ...baseForm, abv: '40% Alc./Vol.', net_contents: '600 mL' },
+      { ...baseExtraction, abv: '50% Alc./Vol.', net_contents: '600 mL' }
+    );
+    expect(getOverall(fields)).toBe('FAIL');
+    // Advisory still surfaced; the FAIL came from the cross-validation layer only.
+    expect(advisories.some((a) => a.id === 'bottle-size-non-standard')).toBe(true);
+  });
+
+  it('pipeline_no_advisories_for_perfect_label — clean label and form yields empty advisories array', () => {
+    const { fields, advisories } = validateSpiritsLabel(baseForm, baseExtraction);
+    expect(getOverall(fields)).toBe('PASS');
+    expect(advisories).toEqual([]);
   });
 });

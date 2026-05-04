@@ -2,28 +2,46 @@
 
 ## Architecture
 
+### Two independent output streams
+
+The system answers two separate questions about a label, and the two answers are deliberately kept apart:
+
+| | Cross-Validation | Compliance Advisories |
+|---|---|---|
+| **Question** | Does the label match the application? | Does the label itself comply with TTB regulations? |
+| **Module** | `lib/validators/spirits.ts` | `lib/validators/compliance.ts` |
+| **Output** | `FieldResult[]` | `ComplianceFlag[]` |
+| **Drives `overallStatus`?** | **Yes** — PASS / FAIL / REVIEW | **No** — informational only |
+| **Status values** | `pass` / `fail` / `warning` / `missing` | `info` / `warning` / `review-required` |
+
+A green PASS verdict can — and often will — coexist with one or more advisories. That is the desired outcome, not a bug. Advisories never flip a green header to yellow or red. This preserves the "5-second approval" path while still surfacing rule observations a human reviewer would catch by eye. See [docs/specs/compliance-advisories.md](specs/compliance-advisories.md) for the full design.
+
 ### Validation Pipeline
 ```
 Image + FormData
-  → [1] Gemini Vision extraction  (structured JSON from label)
-  → [2] Regex layer               (ABV, net contents, government warning)
-  → [3] Semantic layer            (fuzzy: brand name, class/type, address)
-  → [4] Spirits compliance engine (27 CFR Part 5 presence + format rules)
-  → FieldResult[] with per-field status
+  → [1] Gemini Vision extraction       (structured JSON from label)
+  → [2] Regex layer                    (ABV, net contents, government warning)
+  → [3] Semantic layer                 (fuzzy: brand name, class/type, address)
+  → [4] Spirits cross-validation       (27 CFR Part 5 presence + format rules)
+  ┊                                    └─→ FieldResult[]    (drives overallStatus)
+  → [5] Compliance advisories          (label-only TTB rule checks)
+                                       └─→ ComplianceFlag[] (informational)
 ```
 
 ### Key Files
 | Path | Purpose |
 |------|---------|
-| `types/cola.ts` | All shared TypeScript types |
+| `types/cola.ts` | All shared TypeScript types (incl. `ComplianceFlag`, `AdvisoryStatus`) |
 | `lib/gemini.ts` | Gemini Vision client + extraction prompt |
 | `lib/validators/regex.ts` | ABV, net contents, government warning comparison |
 | `lib/validators/semantic.ts` | Levenshtein fuzzy matching |
-| `lib/validators/spirits.ts` | 27 CFR Part 5 orchestration |
+| `lib/validators/spirits.ts` | 27 CFR Part 5 cross-validation orchestrator (returns `{ fields, advisories }`) |
+| `lib/validators/compliance.ts` | Compliance advisory rules + `runComplianceChecks` orchestrator |
 | `lib/parsers/json-import.ts` | JSON form data file parser |
 | `lib/parsers/csv-import.ts` | CSV form data file parser |
 | `app/api/analyze/route.ts` | POST endpoint |
 | `components/LabelVerifier.tsx` | Main UI state machine |
+| `components/ResultsCard.tsx` | Per-field results + compliance advisories section |
 | `evals/` | All tests and ground-truth fixtures |
 
 ---
@@ -56,7 +74,7 @@ Image + FormData
 ### Spirits Validator — `lib/validators/spirits.ts`
 - `APPROVED_CLASS_TYPES` — representative list of approved 27 CFR Part 5 designations
 - `isApprovedClassType` — checks extracted class type against approved list
-- `validateSpiritsLabel` — orchestrates all 8 field checks:
+- `validateSpiritsLabel` — top-level orchestrator. Returns `{ fields: FieldResult[], advisories: ComplianceFlag[] }`. The `fields` array drives `overallStatus`; `advisories` are informational and computed by delegating to `runComplianceChecks`. The 8 cross-validation field checks:
   - Brand name: fuzzy match
   - Class/type: fuzzy match + CFR approval check (fail stays fail; pass → warning if unapproved)
   - ABV: numeric regex
@@ -64,6 +82,15 @@ Image + FormData
   - Bottler name + address: fuzzy match
   - Country of origin: required only for imports
   - Government warning: auto-checked against official TTB text (agent does not submit this field)
+
+### Compliance Advisories — `lib/validators/compliance.ts`
+Rule-based label-only checks. Each rule is a pure function returning `ComplianceFlag | null`; `runComplianceChecks` calls all of them and filters out the nulls. Rules:
+- `checkBottleSize` — flags net contents outside the 27 CFR 5.47 approved fill list (±2 mL OCR tolerance). Approved sizes (mL): 50, 100, 200, 355, 375, 500, 700, 750, 1000, 1750.
+- `checkAgeStatement` — for whisky: flags missing on-label age statement when the agent supplies `aged_years < 4` via `ApplicationData.aged_years`. Severity `review-required`. (27 CFR 5.40)
+- `checkStatementOfComposition` — for liqueur, cordial, distilled spirits specialty, and flavored variants: flags absent composition text. (27 CFR 5.39)
+- `checkStateOfDistillation` — flags missing state of distillation on "straight" whisky labels, and missing country on imported labels. (27 CFR 5.36)
+- `checkProductionStatement` — flags non-standard production phrasings (e.g., "Made by..." vs. "Distilled by..."). Also flags missing production statement when a producer is named. (27 CFR 5.36)
+- `checkFancifulName` — when the extracted brand text contains the submitted brand plus extra trailing words, surfaces those words as a potential fanciful-name candidate. Info severity. Acts as a safety net for extraction misbehavior — Gemini's prompt strips fanciful names, so this rule fires rarely in normal operation.
 
 ### Form Data Parsers
 - `lib/parsers/json-import.ts` — parses uploaded `.json` file into `ApplicationData`; validates required fields; warns on unknown keys
@@ -116,8 +143,9 @@ Image + FormData
 ---
 
 ## Eval Suite
-- **65 tests passing** across 3 test files
-- `evals/validators.test.ts` — 37 unit tests for regex + semantic + spirits validators
-- `evals/parsers.test.ts` — 28 tests for JSON/CSV parsers
-- `evals/pipeline.test.ts` — 6 fixture-based end-to-end pipeline tests + 8 edge case tests
+- **124 tests passing** across 4 test files
+- `evals/validators.test.ts` — unit tests for regex + semantic + spirits class/type validators
+- `evals/compliance.test.ts` — per-rule advisory tests + orchestrator tests
+- `evals/parsers.test.ts` — JSON/CSV parser tests (incl. optional `aged_years`)
+- `evals/pipeline.test.ts` — fixture-based end-to-end tests + edge cases + advisory/headline-independence tests
 - `evals/fixtures/ground-truth/` — 6 JSON fixtures: all-pass, ABV mismatch, wrong gov warning capitalization, brand name case mismatch, missing gov warning, import missing country of origin

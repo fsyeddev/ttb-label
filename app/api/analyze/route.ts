@@ -48,10 +48,11 @@ export async function POST(req: NextRequest) {
     // --- Gemini Extraction ---
     const extraction = await extractLabelData(imageBase64, imageFile.type);
 
-    // --- Validation ---
-    const fields = validateSpiritsLabel(applicationData, extraction);
+    // --- Validation (cross-validation fields + compliance advisories) ---
+    const { fields, advisories } = validateSpiritsLabel(applicationData, extraction);
 
-    // --- Determine overall status ---
+    // --- Determine overall status — derived from FieldResult[] only.
+    // Advisories are informational and never affect the headline verdict. ---
     const hasFailures = fields.some((f) => f.status === 'fail');
     const hasWarnings = fields.some((f) => f.status === 'warning');
     let overallStatus: OverallStatus = 'PASS';
@@ -62,6 +63,7 @@ export async function POST(req: NextRequest) {
       jobId: uuidv4(),
       processingMs: Date.now() - start,
       fields,
+      advisories,
       overallStatus,
       extraction,
     };

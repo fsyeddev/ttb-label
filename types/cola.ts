@@ -39,6 +39,10 @@ export interface ApplicationData {
   is_import?: boolean;
   applicant_name?: string;
   permit_number?: string;
+  // Optional: agent-supplied age in years for whisky aging advisory (27 CFR 5.40).
+  // Whisky aged < 4 years requires an age statement on the label; this lets the
+  // compliance layer fire only when the agent supplies a known-young age.
+  aged_years?: number;
 }
 
 // Raw extraction output from Gemini Vision
@@ -51,6 +55,12 @@ export interface ExtractionResult {
   bottler_address: string | null;
   country_of_origin: string | null;
   government_warning: string | null;
+  // Compliance-advisory fields — extracted from the label, used by lib/validators/compliance.ts.
+  // Independent of cross-validation; never affect overallStatus.
+  age_statement?: string | null;             // e.g. "Aged 4 Years"
+  statement_of_composition?: string | null;  // e.g. "Cinnamon-flavored whisky with natural flavors"
+  state_of_distillation?: string | null;     // e.g. "Distilled in Kentucky" or "Product of Scotland"
+  production_statement?: string | null;      // e.g. "Distilled and bottled by..."
   raw_text?: string;
   confidence?: 'high' | 'medium' | 'low';
 }
@@ -66,11 +76,26 @@ export interface FieldResult {
   complianceNote?: string;
 }
 
+// Compliance advisory — informational TTB-rule check on the label itself.
+// Lives alongside FieldResult[] but is independent: advisories never affect
+// overallStatus. See docs/specs/compliance-advisories.md for the full design.
+export type AdvisoryStatus = 'info' | 'warning' | 'review-required';
+
+export interface ComplianceFlag {
+  id: string;                  // stable identifier, e.g. "bottle-size-non-standard"
+  severity: AdvisoryStatus;
+  title: string;               // short, agent-readable headline
+  detail: string;              // 1-2 sentence plain-English explanation
+  cfrReference: string;        // e.g. "27 CFR 5.47"
+  relatedField?: COLAField;    // optional anchor to a specific field for UI highlighting
+}
+
 // Full analysis response from /api/analyze
 export interface AnalysisResponse {
   jobId: string;
   processingMs: number;
-  fields: FieldResult[];
+  fields: FieldResult[];           // drives overallStatus
+  advisories: ComplianceFlag[];    // informational; never affects overallStatus
   overallStatus: OverallStatus;
   extraction: ExtractionResult;
   error?: string;

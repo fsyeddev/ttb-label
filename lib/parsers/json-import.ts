@@ -48,10 +48,22 @@ export function parseJSONImport(raw: string): ParseResult {
     'brand_name', 'class_type', 'abv', 'net_contents',
     'bottler_name', 'bottler_address', 'country_of_origin',
     'government_warning', 'is_import', 'applicant_name', 'permit_number',
+    'aged_years',
   ]);
   for (const key of Object.keys(obj)) {
     if (!knownKeys.has(key)) {
       warnings.push(`Unknown field "${key}" will be ignored.`);
+    }
+  }
+
+  // Parse optional numeric age (used by the whisky aging advisory, 27 CFR 5.40).
+  let agedYears: number | undefined;
+  if (obj.aged_years !== undefined && obj.aged_years !== null && obj.aged_years !== '') {
+    const n = Number(obj.aged_years);
+    if (Number.isFinite(n) && n >= 0) {
+      agedYears = n;
+    } else {
+      warnings.push(`"aged_years" must be a non-negative number; got "${String(obj.aged_years)}".`);
     }
   }
 
@@ -67,6 +79,7 @@ export function parseJSONImport(raw: string): ParseResult {
     is_import: Boolean(obj.is_import),
     applicant_name: obj.applicant_name ? String(obj.applicant_name).trim() : undefined,
     permit_number: obj.permit_number ? String(obj.permit_number).trim() : undefined,
+    aged_years: agedYears,
   };
 
   return { data, errors: [], warnings };

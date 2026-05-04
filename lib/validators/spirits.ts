@@ -1,10 +1,11 @@
 // 27 CFR Part 5 — COLA compliance rules for distilled spirits
 // Validates that all required fields are present and meet TTB standards
 
-import type { ApplicationData, ExtractionResult, FieldResult, COLAField } from '@/types/cola';
+import type { ApplicationData, ExtractionResult, FieldResult, ComplianceFlag } from '@/types/cola';
 import { COLA_FIELD_LABELS } from '@/types/cola';
 import { compareABV, compareNetContents, compareGovernmentWarning, GOVERNMENT_WARNING_OFFICIAL } from './regex';
 import { compareTextField } from './semantic';
+import { runComplianceChecks } from './compliance';
 
 // Approved class/type designations from 27 CFR Part 5.22 and 5.35
 // This is a representative subset — expand with full CFR list for production
@@ -102,13 +103,19 @@ export function isApprovedClassType(classType: string): boolean {
 }
 
 /**
- * Run all 27 CFR Part 5 compliance checks against extracted label data and submitted form data.
- * Returns one FieldResult per COLA field.
+ * Run all 27 CFR Part 5 cross-validation field checks AND compliance advisories
+ * against extracted label data and submitted form data.
+ *
+ * Returns:
+ *   - fields: one FieldResult per COLA field (drives overallStatus)
+ *   - advisories: ComplianceFlag[] (informational; never affects overallStatus)
+ *
+ * The two streams are independent by design — see docs/specs/compliance-advisories.md.
  */
 export function validateSpiritsLabel(
   formData: ApplicationData,
   extraction: ExtractionResult
-): FieldResult[] {
+): { fields: FieldResult[]; advisories: ComplianceFlag[] } {
   const results: FieldResult[] = [];
 
   // 1. Brand Name — fuzzy match
@@ -260,5 +267,7 @@ export function validateSpiritsLabel(
       '"GOVERNMENT WARNING:" must appear in ALL CAPS; exact official language required (27 CFR 16.20)',
   });
 
-  return results;
+  const advisories = runComplianceChecks(formData, extraction);
+
+  return { fields: results, advisories };
 }

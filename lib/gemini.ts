@@ -17,6 +17,10 @@ Required fields to extract:
 - bottler_address: Address of the bottler/producer (city, state, country)
 - country_of_origin: Country where the product was produced (null if not stated, "USA" if domestic)
 - government_warning: The full government warning text. If the text wraps across lines with hyphens (e.g., "CONSUMP-\nTION" or "GEN-\nERAL"), remove the hyphen and join the word back together so the result reads "CONSUMPTION" and "GENERAL". Return the complete, continuous text with no line-break artifacts. Return null if not present.
+- age_statement: Any explicit age-on-label text such as "Aged 4 Years", "Aged 12 Years", "10 Year Old", or similar. Return the literal phrase. Return null if no age is stated on the label.
+- statement_of_composition: For liqueurs, cordials, and Distilled Spirits Specialty products, the descriptive composition sentence near the class designation (e.g., "Cinnamon-flavored whisky with natural flavors", "Cane spirit with botanicals and natural flavors"). Return the literal sentence. Return null if not present.
+- state_of_distillation: Any explicit indication of where the spirit was distilled or the country of origin if imported, such as "Distilled in Kentucky", "Distilled in Tennessee", "Product of Scotland", "Produced in Mexico". Return the literal phrase. Return null if not present.
+- production_statement: The literal phrase used to attribute production to the bottler/producer (e.g., "Distilled by Old Tom Distillery", "Bottled by ABC Spirits", "Produced and bottled by XYZ", "Imported by..."). Return the full phrase including the producer name. Return null if no production attribution is on the label.
 - raw_text: A brief summary of all text visible on the label
 
 Return null for any field you cannot find or read clearly.
@@ -31,6 +35,10 @@ Return JSON in this exact shape:
   "bottler_address": string | null,
   "country_of_origin": string | null,
   "government_warning": string | null,
+  "age_statement": string | null,
+  "statement_of_composition": string | null,
+  "state_of_distillation": string | null,
+  "production_statement": string | null,
   "raw_text": string | null,
   "confidence": "high" | "medium" | "low"
 }`;

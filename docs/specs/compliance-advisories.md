@@ -1,6 +1,6 @@
 # Feature Spec — Compliance Advisories
 
-**Status:** Draft
+**Status:** Done
 **Owner:** Faheem
 **Last updated:** 2026-05-04
 

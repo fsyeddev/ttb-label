@@ -1,6 +1,6 @@
 'use client';
 
-import type { AnalysisResponse, FieldResult } from '@/types/cola';
+import type { AnalysisResponse, FieldResult, ComplianceFlag, AdvisoryStatus } from '@/types/cola';
 import FieldBadge from './FieldBadge';
 
 interface ResultsCardProps {
@@ -31,6 +31,56 @@ const OVERALL_CONFIG = {
     description: 'Some fields have minor discrepancies that may require agent review.',
   },
 };
+
+// Visual treatment per advisory severity. Kept distinct from FieldBadge styling
+// so the advisories section reads as a separate concern from cross-validation.
+const ADVISORY_CONFIG: Record<
+  AdvisoryStatus,
+  { accent: string; iconBg: string; icon: string; label: string }
+> = {
+  info: {
+    accent: 'border-l-4 border-blue-300 bg-blue-50',
+    iconBg: 'bg-blue-500',
+    icon: 'i',
+    label: 'Info',
+  },
+  warning: {
+    accent: 'border-l-4 border-yellow-400 bg-yellow-50',
+    iconBg: 'bg-yellow-500',
+    icon: '!',
+    label: 'Warning',
+  },
+  'review-required': {
+    accent: 'border-l-4 border-orange-400 bg-orange-50',
+    iconBg: 'bg-orange-500',
+    icon: '?',
+    label: 'Review Required',
+  },
+};
+
+function AdvisoryRow({ advisory }: { advisory: ComplianceFlag }) {
+  const cfg = ADVISORY_CONFIG[advisory.severity];
+  return (
+    <div className={`rounded-lg p-4 ${cfg.accent}`}>
+      <div className="flex items-start gap-3">
+        <div
+          className={`w-7 h-7 rounded-full ${cfg.iconBg} text-white text-sm font-bold flex items-center justify-center shrink-0`}
+          aria-hidden="true"
+        >
+          {cfg.icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-gray-900 text-base">{advisory.title}</span>
+            <span className="text-xs uppercase tracking-wide text-gray-500">{cfg.label}</span>
+          </div>
+          <p className="text-sm text-gray-700 mt-1">{advisory.detail}</p>
+          <p className="text-xs text-gray-500 italic mt-1">{advisory.cfrReference}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function FieldRow({ field }: { field: FieldResult }) {
   return (
@@ -129,6 +179,26 @@ export default function ResultsCard({ result, onReset }: ResultsCardProps) {
           ))}
         </div>
       </div>
+
+      {/* Compliance advisories — informational only; never affects the headline verdict.
+          Section is omitted entirely when there are no advisories (the presence of the
+          section is the signal). */}
+      {result.advisories.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-1">
+            Compliance Advisories ({result.advisories.length})
+          </h3>
+          <p className="text-sm text-gray-500 mb-3">
+            TTB rule observations on the label itself. These do not affect the verdict above —
+            review them at your discretion.
+          </p>
+          <div className="space-y-3">
+            {result.advisories.map((advisory) => (
+              <AdvisoryRow key={advisory.id} advisory={advisory} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex gap-3 pt-2">

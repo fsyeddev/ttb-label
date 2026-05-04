@@ -39,6 +39,9 @@ const HEADER_MAP: Record<string, keyof ApplicationData> = {
   is_import: 'is_import',
   import: 'is_import',
   imported: 'is_import',
+  aged_years: 'aged_years',
+  'aged years': 'aged_years',
+  age: 'aged_years',
 };
 
 const REQUIRED_FIELDS: (keyof ApplicationData)[] = [
@@ -76,6 +79,18 @@ export function parseCSVImport(raw: string): ParseResult {
     }
   }
 
+  // Parse optional numeric aged_years (used by the whisky aging advisory, 27 CFR 5.40).
+  let agedYears: number | undefined;
+  const agedRaw = mapped.aged_years;
+  if (agedRaw && agedRaw.trim()) {
+    const n = Number(agedRaw);
+    if (Number.isFinite(n) && n >= 0) {
+      agedYears = n;
+    } else {
+      warnings.push(`"aged_years" must be a non-negative number; got "${agedRaw}".`);
+    }
+  }
+
   for (const field of REQUIRED_FIELDS) {
     if (!mapped[field]?.trim()) {
       errors.push(`Missing required field: "${field}"`);
@@ -96,6 +111,7 @@ export function parseCSVImport(raw: string): ParseResult {
     country_of_origin: mapped.country_of_origin ?? '',
     government_warning: mapped.government_warning ?? '',
     is_import: ['true', '1', 'yes'].includes((mapped.is_import ?? '').toLowerCase()),
+    aged_years: agedYears,
   };
 
   return { data, errors: [], warnings };
