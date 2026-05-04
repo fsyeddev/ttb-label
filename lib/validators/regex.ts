@@ -4,6 +4,16 @@ import { levenshtein } from './semantic';
 export const GOVERNMENT_WARNING_OFFICIAL =
   'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.';
 
+// Maximum Levenshtein distance between extracted and official government warning
+// text (after `joinHyphens` normalization) that still routes to `warning` rather
+// than `fail`. Beyond this, the deviation is treated as obvious garbage that
+// agents should not have to manually review.
+//
+// The official text is 218 characters; 10 chars ≈ 4.6%, so the user-facing
+// rule of thumb is "more than ~5% off the official text → automatic fail".
+// See docs/specs/govwarn-100pct-threshold.md (BUG-08 refinement).
+const MAX_WARNING_DISTANCE = 10;
+
 // ABV: matches "45% Alc./Vol.", "40% alc. by vol.", "45 % Alc. by Vol.", "80 Proof", etc.
 const ABV_PATTERN = /^\d{1,2}(\.\d{1,2})?(\s)?%(\s)?(alc\.?(\s)?(\/|\s)?vol\.?|alc\.?\s+by\s+vol\.?)/i;
 const PROOF_PATTERN = /^\d{1,3}(\.\d{1,2})?\s*proof/i;
@@ -110,15 +120,21 @@ export function compareNetContents(submitted: string, extracted: string): { matc
 /**
  * Compare government warning against the official statutory text.
  *
- * Three outcomes (see docs/specs/govwarn-100pct-threshold.md, BUG-08):
- *   - fail   — structural violation: warning entirely absent, or "GOVERNMENT WARNING"
- *              not in ALL CAPS. These are unambiguous CFR violations.
- *   - pass   — exact match against the official text after normalization
- *              (line-break hyphen joining + whitespace collapse only).
- *   - warning — anything else. The text is statutorily exact, so any wording
- *               deviation routes to human review with an edit-distance signal.
- *               Bias intentional: false-positive flags are cheaper than
- *               false-negative passes for this field.
+ * Outcomes (see docs/specs/govwarn-100pct-threshold.md, BUG-08):
+ *
+ *   Structural hard fails (independent of the distance buckets):
+ *     - extracted is null/empty                              → fail
+ *     - "GOVERNMENT WARNING" (uppercase) not present         → fail
+ *
+ *   Text-comparison branch (Levenshtein distance after `joinHyphens` normalization):
+ *     - distance == 0                                        → pass
+ *     - 1 ≤ distance ≤ MAX_WARNING_DISTANCE                  → warning
+ *     - distance > MAX_WARNING_DISTANCE                      → fail
+ *
+ * Bias intentional: false-positive flags are cheaper than false-negative
+ * passes for statutorily exact text. The distance ceiling protects against
+ * the inverse problem — completely-different or severely-truncated wording
+ * landing in the warning bucket and forcing agents to manually review garbage.
  */
 export function compareGovernmentWarning(submitted: string | null, extracted: string | null): {
   match: boolean;
@@ -158,9 +174,19 @@ export function compareGovernmentWarning(submitted: string | null, extracted: st
   }
 
   const distance = levenshtein(officialNorm, extractedNorm);
+  const charWord = distance === 1 ? 'character' : 'characters';
+
+  if (distance > MAX_WARNING_DISTANCE) {
+    return {
+      match: false,
+      status: 'fail',
+      note: `Government warning text differs from required TTB language by ${distance} ${charWord} (more than ~5% off official). Hard fail — not a routine OCR variation.`,
+    };
+  }
+
   return {
     match: false,
     status: 'warning',
-    note: `Government warning text differs from required TTB language by ${distance} character${distance === 1 ? '' : 's'}. Manual review required — the warning text is statutorily exact.`,
+    note: `Government warning text differs from required TTB language by ${distance} ${charWord}. Manual review required — the warning text is statutorily exact.`,
   };
 }

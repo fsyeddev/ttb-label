@@ -146,8 +146,15 @@ These categories all worked as designed and need no further action:
 
 ## Closed bugs
 
-### 🟠 BUG-08 — Government warning fuzzy threshold accepts subtle wording corruptions
-- **Resolution:** Dropped the tiered Levenshtein thresholds in `compareGovernmentWarning`. After the structural hard-fail checks (null / not-ALL-CAPS), the function now does a strict equality check against the official text (line-break hyphen joining + whitespace collapse normalization only). Any non-100% match returns `warning` with an edit-distance signal in the note. Sneaky cases `06-warning-sneaky-{01,03,04,05}` now flag for review instead of passing. Spec: [`docs/specs/govwarn-100pct-threshold.md`](specs/govwarn-100pct-threshold.md).
+### 🟠 BUG-08 — Government warning threshold (two passes)
+- **Pass 1 — 100% threshold (initial fix).** Dropped the legacy tiered Levenshtein thresholds (≥0.92 pass / 0.75–0.92 warning / <0.75 fail) in `compareGovernmentWarning`. Replaced with strict equality after normalization: anything non-exact returned `warning`. This caught the cat-6 sneaky one-word substitutions that had been auto-passing.
+- **Pass 2 — three-tier distance model (refinement).** The 100%-or-warning rule turned out too coarse: severely truncated warnings (`05-warning-bad-03`) and completely-different wording (`05-warning-bad-04`) routed to REVIEW when they should hard-fail. Split the text-comparison branch into three buckets keyed off Levenshtein distance against the normalized official text:
+  - distance 0 → `pass`
+  - 1 ≤ distance ≤ `MAX_WARNING_DISTANCE` (10) → `warning`
+  - distance > 10 → `fail` ("more than ~5% off official")
+  Structural hard fails (null extraction, non-ALL-CAPS prefix) are independent of the distance buckets and unchanged.
+- **Spec:** [`docs/specs/govwarn-100pct-threshold.md`](specs/govwarn-100pct-threshold.md) (filename retained from pass 1 as a stable identifier; body describes the three-tier model).
+- **Confirmation:** post-deploy live eval against cat-5 + cat-6 fixtures — see commit message of the follow-up confirmation commit.
 
 ---
 

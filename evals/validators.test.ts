@@ -107,22 +107,25 @@ describe("compareGovernmentWarning", () => {
     expect(r.note).toMatch(/all capital/i);
   });
 
-  it("warns when warning is present but truncated", () => {
-    // Per BUG-08 / govwarn-100pct-threshold spec: any non-100% match routes to
-    // human review, including obvious truncations. Bias toward flag, not pass.
+  it("fails when warning is present but severely truncated", () => {
+    // BUG-08 refinement: distance > MAX_WARNING_DISTANCE (10 chars) hard-fails.
+    // First-sentence truncation drops ~160 chars from the 218-char official —
+    // far past the warning band. Agents shouldn't have to review obvious garbage.
     const partial = "GOVERNMENT WARNING: (1) According to the Surgeon General...";
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, partial);
-    expect(r.status).toBe("warning");
-    expect(r.note).toMatch(/character/i);
+    expect(r.status).toBe("fail");
+    expect(r.note).toMatch(/more than ~5%/i);
   });
 
-  it("warns when warning has line-break hyphen artifacts", () => {
-    // Hyphen joining recovers "GENERAL" / "CONSUMPTION" but the official text
-    // has "General" / "Consumption" (case differs). Strict equality after
-    // normalization fails, so this surfaces as warning rather than pass.
-    const withHyphens =
-      "GOVERNMENT WARNING: (1) According to the Surgeon GEN- ERAL, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) CONSUMP- TION of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.";
-    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, withHyphens);
+  it("warns when warning has hyphen artifacts plus minor OCR noise", () => {
+    // Realistic OCR: line-break hyphens join back cleanly via joinHyphens
+    // (case-correct), but a couple of incidental character misreads remain.
+    // Total distance stays in the warning band (≤ MAX_WARNING_DISTANCE).
+    // (The previous all-caps "GEN- ERAL" / "CONSUMP- TION" version was a
+    // synthetic worst case — distance 16 — which now correctly hard-fails.)
+    const withHyphensAndNoise =
+      "GOVERNMENT WARNING: (1) According to the Surgeon Gen- eral, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consump- tion of alcoholic beverages impairs your ability to drive a car or operate machinery, and may casue health problems.";
+    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, withHyphensAndNoise);
     expect(r.status).toBe("warning");
   });
 
@@ -161,6 +164,16 @@ describe("compareGovernmentWarning", () => {
     const sneaky = GOVERNMENT_WARNING_OFFICIAL.replace("GOVERNMENT WARNING:", "GOVERNMENT WARNING");
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, sneaky);
     expect(r.status).toBe("warning");
+  });
+
+  it("fails when warning is wholly different text", () => {
+    // CAPS prefix satisfied but the body is unrelated — distance well past
+    // MAX_WARNING_DISTANCE. Should hard-fail, not route to review.
+    const garbage =
+      "GOVERNMENT WARNING: This product may contain ingredients that some people find delicious. Side effects include enjoying yourself. Drink responsibly within reason.";
+    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, garbage);
+    expect(r.status).toBe("fail");
+    expect(r.note).toMatch(/more than ~5%/i);
   });
 });
 

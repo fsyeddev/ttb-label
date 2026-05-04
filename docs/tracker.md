@@ -22,7 +22,7 @@ Agents upload a label image + application data; the system checks they match and
 - Unit normalization for net contents (mL ↔ L)
 - Fuzzy matching for text fields — handles minor formatting differences and typos
 - Compliance advisories layer — surfaces TTB rule observations (bottle size, age statement, statement of composition, state of distillation, production statement phrasing, fanciful name) as informational flags alongside the cross-validation result. Never affects the PASS / FAIL / REVIEW headline.
-- 128 automated tests passing (unit, parser, advisory, and end-to-end pipeline)
+- 129 automated tests passing (unit, parser, advisory, and end-to-end pipeline)
 
 ---
 
