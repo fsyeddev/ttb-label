@@ -154,7 +154,16 @@ These categories all worked as designed and need no further action:
   - distance > 10 → `fail` ("more than ~5% off official")
   Structural hard fails (null extraction, non-ALL-CAPS prefix) are independent of the distance buckets and unchanged.
 - **Spec:** [`docs/specs/govwarn-100pct-threshold.md`](specs/govwarn-100pct-threshold.md) (filename retained from pass 1 as a stable identifier; body describes the three-tier model).
-- **Confirmation:** post-deploy live eval against cat-5 + cat-6 fixtures — see commit message of the follow-up confirmation commit.
+- **Confirmation (2026-05-04 live eval against `https://cola-verify.vercel.app`, 8 targeted cases):**
+  - `05-warning-bad-01` (warning entirely missing) → **FAIL** (structural; "Government warning not found on label")
+  - `05-warning-bad-02` (title-case prefix) → **FAIL** (structural; "must appear in all capital letters")
+  - `05-warning-bad-03` (truncated to first sentence) → **FAIL** (distance 128 chars; "more than ~5% off official")
+  - `05-warning-bad-04` (completely different wording) → **FAIL** (distance 205 chars; "more than ~5% off official")
+  - `06-warning-sneaky-01` (could/may) → **REVIEW**
+  - `06-warning-sneaky-02` (missing "(1)" clause) → **REVIEW**
+  - `06-warning-sneaky-03` (a/the Surgeon General) → **REVIEW**
+  - `06-warning-sneaky-04` (alcohol/alcoholic beverages) → **REVIEW**
+  - Result: cat-5 = FAIL × 4, cat-6 = REVIEW × 4 — matches the design exactly. (One Gemini 503 on the first run for `05-warning-bad-01`; retried cleanly — INFRA-04 still open.)
 
 ---
 
