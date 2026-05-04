@@ -54,6 +54,7 @@ Image + FormData
 - `class_type` prompt: extracts legal 27 CFR Part 5 designation only (e.g., "Cinnamon Liqueur"), ignores fanciful names
 - `government_warning` prompt: joins line-break hyphens before returning (e.g., "CONSUMP- TION" → "CONSUMPTION")
 - Strips markdown code fences from Gemini response before JSON parsing
+- `callWithRetryOn503` wraps the SDK call: up to 2 retries on `GEMINI_503_RETRY_DELAYS_MS = [5000, 10000]` ms when Gemini returns 503 ("model is currently experiencing high demand"). Each retry logs via `console.warn`; the original 503 is rethrown unchanged after exhaustion. Non-503 errors are not retried. See [`docs/specs/gemini-503-retry.md`](specs/gemini-503-retry.md) (INFRA-04).
 - Model: `gemini-2.5-flash-lite`
 
 ### Regex Validator — `lib/validators/regex.ts`
@@ -145,9 +146,10 @@ Rule-based label-only checks. Each rule is a pure function returning `Compliance
 ---
 
 ## Eval Suite
-- **124 tests passing** across 4 test files
+- **135 tests passing** across 5 test files
 - `evals/validators.test.ts` — unit tests for regex + semantic + spirits class/type validators
 - `evals/compliance.test.ts` — per-rule advisory tests + orchestrator tests
 - `evals/parsers.test.ts` — JSON/CSV parser tests (incl. optional `aged_years`)
 - `evals/pipeline.test.ts` — fixture-based end-to-end tests + edge cases + advisory/headline-independence tests
+- `evals/gemini-retry.test.ts` — Gemini 503 retry path (1×, 2×, exhaustion, no-retry-on-non-503, message-text fallback detection)
 - `evals/fixtures/ground-truth/` — 6 JSON fixtures: all-pass, ABV mismatch, wrong gov warning capitalization, brand name case mismatch, missing gov warning, import missing country of origin

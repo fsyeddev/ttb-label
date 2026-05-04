@@ -105,11 +105,6 @@ These aren't product bugs — the fixture spec or generated image is internally 
 - **Fix idea:** For Cat 2 expectations, count any field with `status !== 'pass'` (fail OR warning) toward the "≥1 mismatch" assertion. Optionally split into a separate "soft mismatch" expectation if we want to distinguish.
 - **Affects:** `scripts/run-fixture-evals.ts` — `judge` function
 
-### 🔵 INFRA-04 — No retry on Gemini 503 transient outages
-
-- 3 of 30 cases got `503 Service Unavailable` ("model is currently experiencing high demand"). Eval script gives up immediately and reports server error.
-- **Fix idea:** Retry on 503 with exponential backoff (separate from 429 quota handling). 1-2 retries with 5-10s backoff would have caught all 3 cases this run.
-
 ---
 
 ## Coverage observations
@@ -145,6 +140,11 @@ These categories all worked as designed and need no further action:
 ---
 
 ## Closed bugs
+
+### 🔵 INFRA-04 — No retry on Gemini 503 transient outages
+- **Resolution:** Server-side retry on 503 added inside `lib/gemini.ts` around the `generateContent` call. Up to 2 retries on `GEMINI_503_RETRY_DELAYS_MS = [5000, 10000]`, each logged via `console.warn`; original error rethrown unchanged on exhaustion. Non-503 errors are not retried.
+- **Spec:** [`docs/specs/gemini-503-retry.md`](specs/gemini-503-retry.md).
+- **Tests:** 6 new cases in `evals/gemini-retry.test.ts` covering retry-on-503 (1×, 2×, exhaustion), no-retry-on-non-503, and message-text fallback detection. All 135 tests passing.
 
 ### 🟠 BUG-08 — Government warning threshold (two passes)
 - **Pass 1 — 100% threshold (initial fix).** Dropped the legacy tiered Levenshtein thresholds (≥0.92 pass / 0.75–0.92 warning / <0.75 fail) in `compareGovernmentWarning`. Replaced with strict equality after normalization: anything non-exact returned `warning`. This caught the cat-6 sneaky one-word substitutions that had been auto-passing.

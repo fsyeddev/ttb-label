@@ -1,6 +1,33 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { ExtractionResult } from '@/types/cola';
 
+export const GEMINI_503_RETRY_DELAYS_MS = [5000, 10000];
+
+function is503Error(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const e = err as { status?: unknown; message?: unknown };
+  if (e.status === 503) return true;
+  if (typeof e.message === 'string' && /\b503\b/.test(e.message)) return true;
+  return false;
+}
+
+async function callWithRetryOn503<T>(fn: () => Promise<T>): Promise<T> {
+  let attempt = 0;
+  while (true) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (!is503Error(err) || attempt >= GEMINI_503_RETRY_DELAYS_MS.length) throw err;
+      const delayMs = GEMINI_503_RETRY_DELAYS_MS[attempt];
+      console.warn(
+        `[gemini] 503 Service Unavailable — retrying in ${delayMs}ms (attempt ${attempt + 1}/${GEMINI_503_RETRY_DELAYS_MS.length})`
+      );
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      attempt++;
+    }
+  }
+}
+
 const GOVERNMENT_WARNING_OFFICIAL =
   'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.';
 
@@ -50,15 +77,17 @@ export async function extractLabelData(imageBase64: string, mimeType: string): P
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
-  const result = await model.generateContent([
-    {
-      inlineData: {
-        data: imageBase64,
-        mimeType: mimeType as 'image/jpeg' | 'image/png' | 'image/webp',
+  const result = await callWithRetryOn503(() =>
+    model.generateContent([
+      {
+        inlineData: {
+          data: imageBase64,
+          mimeType: mimeType as 'image/jpeg' | 'image/png' | 'image/webp',
+        },
       },
-    },
-    EXTRACTION_PROMPT,
-  ]);
+      EXTRACTION_PROMPT,
+    ])
+  );
 
   const text = result.response.text().trim();
 
