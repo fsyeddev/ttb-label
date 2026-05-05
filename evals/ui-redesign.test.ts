@@ -10,6 +10,7 @@ import { describe, it, expect } from 'vitest';
 import {
   sanitizeNumericInput,
   serializeAbv,
+  serializeNetContents,
   parseAbvString,
   extractNumericPart,
 } from '@/lib/ui/form-helpers';
@@ -134,6 +135,27 @@ describe('serializeAbv — ABV unit toggle', () => {
 
   it('trims surrounding whitespace before formatting', () => {
     expect(serializeAbv('  45  ', 'percent')).toBe('45% Alc./Vol.');
+  });
+});
+
+// ─── serializeNetContents — submit-time mL append ───────────────────────────
+
+describe('serializeNetContents — adds " mL" so submit matches OCR output', () => {
+  it('appends " mL" to a digits-only value', () => {
+    expect(serializeNetContents('750')).toBe('750 mL');
+  });
+
+  it('appends " mL" to a decimal value', () => {
+    expect(serializeNetContents('1.75')).toBe('1.75 mL');
+  });
+
+  it('returns empty for empty input (no stray " mL" alone)', () => {
+    expect(serializeNetContents('')).toBe('');
+    expect(serializeNetContents('   ')).toBe('');
+  });
+
+  it('trims surrounding whitespace before appending', () => {
+    expect(serializeNetContents('  750  ')).toBe('750 mL');
   });
 });
 

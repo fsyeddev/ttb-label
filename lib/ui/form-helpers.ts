@@ -30,6 +30,18 @@ export function serializeAbv(value: string, unit: AbvUnit): string {
 }
 
 /**
+ * Append the implicit "mL" unit to the digits-only net-contents input before
+ * submission. The form input is numeric-only, but the validator + extractor
+ * compare unit-bearing strings ("750 mL") — without this, a fresh form entry
+ * of "750" would FAIL against the OCR's "750 mL".
+ */
+export function serializeNetContents(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  return `${trimmed} mL`;
+}
+
+/**
  * Parse an imported ABV string back into the (numeric value, unit) pair the
  * form holds in state. Examples:
  *   "45% Alc./Vol." → { value: "45",  unit: "percent" }

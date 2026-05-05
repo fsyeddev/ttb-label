@@ -5,7 +5,7 @@ import UploadZone from '@/components/UploadZone';
 import ApplicationForm from '@/components/ApplicationForm';
 import ResultsCard from '@/components/ResultsCard';
 import VerifyingScreen from '@/components/VerifyingScreen';
-import { serializeAbv, type AbvUnit } from '@/lib/ui/form-helpers';
+import { serializeAbv, serializeNetContents, type AbvUnit } from '@/lib/ui/form-helpers';
 import type { ApplicationData, AnalysisResponse } from '@/types/cola';
 
 const EMPTY_FORM: ApplicationData = {
@@ -69,7 +69,11 @@ export default function LabelVerifier() {
       body.append('labelImage', imageFile);
       body.append(
         'applicationData',
-        JSON.stringify({ ...formData, abv: serializeAbv(abvValue, abvUnit) })
+        JSON.stringify({
+          ...formData,
+          abv: serializeAbv(abvValue, abvUnit),
+          net_contents: serializeNetContents(formData.net_contents),
+        })
       );
       const res = await fetch('/api/analyze', {
         method: 'POST',
