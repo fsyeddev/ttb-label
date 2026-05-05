@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import UploadZone from '@/components/UploadZone';
 import ApplicationForm from '@/components/ApplicationForm';
 import ResultsCard from '@/components/ResultsCard';
+import VerifyingScreen from '@/components/VerifyingScreen';
+import { serializeAbv, type AbvUnit } from '@/lib/ui/form-helpers';
 import type { ApplicationData, AnalysisResponse } from '@/types/cola';
 
 const EMPTY_FORM: ApplicationData = {
@@ -22,73 +24,112 @@ type AppState = 'form' | 'loading' | 'results' | 'error';
 export default function LabelVerifier() {
   const [appState, setAppState] = useState<AppState>('form');
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState<ApplicationData>(EMPTY_FORM);
+  const [abvValue, setAbvValue] = useState<string>('');
+  const [abvUnit, setAbvUnit] = useState<AbvUnit>('percent');
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [verifyStartedAt, setVerifyStartedAt] = useState<number>(0);
+  const [verifyFinished, setVerifyFinished] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
+
+  // Keep an object URL for the uploaded image alive while a file is selected.
+  // Used by the verifying screen and the results-page modal/thumbnail.
+  useEffect(() => {
+    if (!imageFile) {
+      setImageUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(imageFile);
+    setImageUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [imageFile]);
 
   const canSubmit =
     imageFile !== null &&
     Boolean(formData.brand_name.trim()) &&
     Boolean(formData.class_type.trim()) &&
-    Boolean(formData.abv.trim()) &&
+    Boolean(abvValue.trim()) &&
     Boolean(formData.net_contents.trim()) &&
     Boolean(formData.bottler_name.trim()) &&
-    Boolean(formData.bottler_address.trim());
+    Boolean(formData.bottler_address.trim()) &&
+    (!formData.is_import || Boolean(formData.country_of_origin.trim()));
 
   const handleSubmit = async () => {
     if (!imageFile || !canSubmit) return;
+    setVerifyStartedAt(Date.now());
+    setVerifyFinished(false);
     setAppState('loading');
     setErrorMessage(null);
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
       const body = new FormData();
       body.append('labelImage', imageFile);
-      body.append('applicationData', JSON.stringify(formData));
-      const res = await fetch('/api/analyze', { method: 'POST', body });
+      body.append(
+        'applicationData',
+        JSON.stringify({ ...formData, abv: serializeAbv(abvValue, abvUnit) })
+      );
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        body,
+        signal: controller.signal,
+      });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? 'Server error. Please try again.');
       setResult(json as AnalysisResponse);
-      setAppState('results');
+      setVerifyFinished(true);
+      // Brief beat so the final stage check appears before the results page swap.
+      setTimeout(() => setAppState('results'), 350);
     } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
       setErrorMessage(err instanceof Error ? err.message : 'An unexpected error occurred.');
       setAppState('error');
+    } finally {
+      abortRef.current = null;
     }
   };
 
-  const handleReset = () => {
+  const handleCancelVerify = () => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setAppState('form');
+  };
+
+  const handleClear = () => {
     setImageFile(null);
     setFormData(EMPTY_FORM);
-    setResult(null);
+    setAbvValue('');
+    setAbvUnit('percent');
     setErrorMessage(null);
+  };
+
+  const handleReset = () => {
+    handleClear();
+    setResult(null);
     setAppState('form');
   };
 
   if (appState === 'loading') {
     return (
-      <div className="flex flex-col items-center justify-center min-h-64 space-y-5 py-24">
-        <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-        <div className="text-center">
-          <p className="text-xl font-semibold text-gray-800">Analyzing Label…</p>
-          <p className="text-gray-500 mt-1">Reading label with AI vision, then checking against COLA requirements.</p>
-        </div>
-      </div>
+      <VerifyingScreen
+        filename={imageFile?.name ?? 'label.png'}
+        imageUrl={imageUrl}
+        startedAt={verifyStartedAt}
+        finished={verifyFinished}
+        onCancel={handleCancelVerify}
+      />
     );
   }
 
   if (appState === 'results' && result) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">Verification Results</h2>
-          <p className="text-gray-500 mt-1">Review the findings below for each required COLA field.</p>
-        </div>
-        <ResultsCard result={result} onReset={handleReset} />
-      </div>
-    );
+    return <ResultsCard result={result} imageUrl={imageUrl} onReset={handleReset} />;
   }
 
   if (appState === 'error') {
     return (
-      <div className="bg-red-50 border border-red-300 rounded-2xl p-8 text-center space-y-4">
+      <div className="max-w-2xl mx-auto bg-red-50 border border-red-300 rounded-2xl p-8 text-center space-y-4 mt-12">
         <div className="text-5xl">⚠️</div>
         <h2 className="text-xl font-bold text-red-800">Something went wrong</h2>
         <p className="text-red-700">{errorMessage}</p>
@@ -103,52 +144,43 @@ export default function LabelVerifier() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800">Review a Label Application</h2>
-        <p className="text-gray-500 mt-1">
-          Upload the label image and enter the application data below. The system will check that
-          they match and meet COLA requirements.
-        </p>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-8">
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-7 h-7 rounded-full bg-blue-600 text-white text-sm font-bold flex items-center justify-center shrink-0">1</span>
-            <span className="text-lg font-semibold text-gray-700">Upload Label Image</span>
+    <div className="px-6 py-8">
+      <div className="max-w-7xl mx-auto bg-slate-200/60 border border-slate-300/70 rounded-xl p-6 md:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div>
+            <UploadZone onImageSelected={setImageFile} currentFile={imageFile} />
           </div>
-          <UploadZone onImageSelected={setImageFile} currentFile={imageFile} />
+          <div>
+            <ApplicationForm
+              data={formData}
+              onChange={setFormData}
+              abvValue={abvValue}
+              onAbvValueChange={setAbvValue}
+              abvUnit={abvUnit}
+              onAbvUnitChange={setAbvUnit}
+            />
+          </div>
         </div>
 
-        <div className="border-t border-gray-100" />
-
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-7 h-7 rounded-full bg-blue-600 text-white text-sm font-bold flex items-center justify-center shrink-0">2</span>
-            <span className="text-lg font-semibold text-gray-700">Enter Application Data</span>
-          </div>
-          <ApplicationForm data={formData} onChange={setFormData} />
-        </div>
-
-        <div className="border-t border-gray-100" />
-
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <p className="text-sm text-gray-500">
-            {!imageFile && 'Upload a label image to continue.'}
-            {imageFile && !canSubmit && 'Fill in all required fields to continue.'}
-            {canSubmit && 'Ready to analyze.'}
-          </p>
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            onClick={handleClear}
+            type="button"
+            className="px-5 py-2.5 rounded-md border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+          >
+            Clear
+          </button>
           <button
             onClick={handleSubmit}
             disabled={!canSubmit}
+            type="button"
             className={
               canSubmit
-                ? 'px-8 py-3 rounded-xl text-white font-bold text-lg bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow-md cursor-pointer transition-all'
-                : 'px-8 py-3 rounded-xl text-white font-bold text-lg bg-gray-300 cursor-not-allowed transition-all'
+                ? 'px-6 py-2.5 rounded-md bg-blue-900 hover:bg-blue-950 text-white font-medium transition-colors cursor-pointer'
+                : 'px-6 py-2.5 rounded-md bg-blue-900/40 text-white font-medium cursor-not-allowed'
             }
           >
-            Analyze Label
+            Verify label →
           </button>
         </div>
       </div>

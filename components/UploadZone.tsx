@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface UploadZoneProps {
-  onImageSelected: (file: File) => void;
+  onImageSelected: (file: File | null) => void;
   currentFile: File | null;
 }
 
@@ -14,6 +14,18 @@ export default function UploadZone({ onImageSelected, currentFile }: UploadZoneP
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+
+  // Sync preview with the parent's currentFile so Clear from outside this
+  // component (Verify card footer) actually removes the preview.
+  useEffect(() => {
+    if (!currentFile) {
+      setPreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(currentFile);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [currentFile]);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -26,8 +38,6 @@ export default function UploadZone({ onImageSelected, currentFile }: UploadZoneP
         setError(`File too large. Maximum size is ${MAX_SIZE_MB} MB.`);
         return;
       }
-      const url = URL.createObjectURL(file);
-      setPreview(url);
       onImageSelected(file);
     },
     [onImageSelected]
@@ -51,62 +61,72 @@ export default function UploadZone({ onImageSelected, currentFile }: UploadZoneP
     [handleFile]
   );
 
-  return (
-    <div className="w-full">
-      <label className="block text-lg font-semibold text-gray-700 mb-2">
-        Label Image <span className="text-red-500">*</span>
-      </label>
+  const openPicker = () => document.getElementById('label-file-input')?.click();
 
-      {preview && currentFile ? (
-        <div className="relative rounded-xl border-2 border-green-400 bg-green-50 overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={preview}
-            alt="Uploaded label preview"
-            className="w-full max-h-72 object-contain p-2"
-          />
-          <div className="px-4 pb-3 flex items-center justify-between">
-            <span className="text-sm text-gray-600 truncate">{currentFile.name}</span>
+  return (
+    <div className="w-full h-full">
+      <div
+        onDrop={onDrop}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragLeave={() => setIsDragging(false)}
+        onClick={openPicker}
+        role="button"
+        tabIndex={0}
+        aria-label="Upload label image"
+        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openPicker()}
+        className={`relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors cursor-pointer w-full h-full min-h-[420px] px-6 py-10
+          ${
+            isDragging
+              ? 'border-blue-500 bg-blue-50/60'
+              : preview
+              ? 'border-gray-300 bg-white'
+              : 'border-gray-300 bg-white hover:border-blue-400 hover:bg-blue-50/30'
+          }`}
+      >
+        <input
+          id="label-file-input"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="sr-only"
+          onChange={onInputChange}
+        />
+
+        {preview && currentFile ? (
+          <div className="flex flex-col items-center gap-3 w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={preview}
+              alt="Uploaded label preview"
+              className="max-h-80 max-w-full object-contain rounded"
+            />
+            <p className="text-xs text-gray-500 truncate max-w-full px-4">{currentFile.name}</p>
             <button
               type="button"
-              onClick={() => {
-                setPreview(null);
-                setError(null);
+              onClick={(e) => {
+                e.stopPropagation();
+                onImageSelected(null);
               }}
-              className="text-sm text-red-600 hover:text-red-700 font-medium ml-3 shrink-0"
+              className="text-xs text-red-600 hover:text-red-700 font-medium"
             >
               Remove
             </button>
           </div>
-        </div>
-      ) : (
-        <div
-          onDrop={onDrop}
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-          onDragLeave={() => setIsDragging(false)}
-          className={`relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed transition-colors cursor-pointer min-h-48 px-6 py-10
-            ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50 bg-white'}`}
-          onClick={() => document.getElementById('label-file-input')?.click()}
-          role="button"
-          tabIndex={0}
-          aria-label="Upload label image"
-          onKeyDown={(e) => e.key === 'Enter' && document.getElementById('label-file-input')?.click()}
-        >
-          <input
-            id="label-file-input"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="sr-only"
-            onChange={onInputChange}
-          />
-          <div className="text-4xl mb-3" aria-hidden="true">📄</div>
-          <p className="text-lg font-semibold text-gray-700 text-center">
-            {isDragging ? 'Drop the label image here' : 'Drag & drop the label image here'}
-          </p>
-          <p className="text-sm text-gray-500 mt-1">or click to browse files</p>
-          <p className="text-xs text-gray-400 mt-2">JPEG, PNG, or WEBP · Max 10 MB</p>
-        </div>
-      )}
+        ) : (
+          <>
+            <div className="w-12 h-12 rounded-full bg-blue-700/90 text-white flex items-center justify-center mb-4 text-xl">
+              ↑
+            </div>
+            <p className="text-base font-medium text-gray-700 text-center">
+              {isDragging ? 'Drop the label image here' : 'Drop label image here'}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">or click to browse</p>
+            <p className="text-xs text-gray-400 mt-6">PNG · JPG · PDF · up to 20 MB</p>
+          </>
+        )}
+      </div>
 
       {error && (
         <p className="mt-2 text-sm text-red-600 font-medium" role="alert">
