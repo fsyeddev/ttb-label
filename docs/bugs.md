@@ -17,22 +17,6 @@ Issues uncovered while running the manually-generated label fixtures against the
 
 ## Open bugs
 
-### 🔴 BUG-01 — Fuzzy match downgrades obvious bottler mismatches to "warning" because of shared generic suffix
-
-- **Case:** `02-mismatch-05` ("JSON wrong bottler name, label correct")
-- **Reproduced manually in the UI:**
-  - Submitted: `"Wrong Distilling Co."`
-  - Extracted from label: `"Prairie Wind Distilling Co."`
-  - Reported: `warning` — "Possible mismatch in Bottler Name: submitted 'Wrong Distilling Co.' vs label 'Prairie Wind Distilling Co.'"
-  - Expected: `fail` — these are completely different companies
-- **Why it lands as warning:**
-  - `compareTextField` in `lib/validators/semantic.ts` uses Levenshtein similarity with thresholds `≥0.85 = pass`, `0.6–0.85 = warning`, `<0.6 = fail`
-  - The two strings share the generic suffix "Distilling Co." (14 of 27 max chars), which gives a similarity around ~0.69 → warning
-  - The unique identifying tokens ("Wrong" vs "Prairie Wind") are entirely different, but Levenshtein has no concept of "the suffix is a generic company-type designator"
-- **Why it matters:** Cat 2 is the core matching loop. The agent is shown a soft "possible mismatch — review" instead of a clear "FAIL — different company entirely." That's a trust regression — the system should be confident here.
-- **Suspected fix direction:** Pre-process strings to strip generic company-type suffixes (`Distillery`, `Distilling Co.`, `Spirits`, `Distillers`, `Inc.`, `LLC`, `Co.`, `Brewery`) from both sides before computing similarity. With suffixes removed: `"Wrong"` vs `"Prairie Wind"` → similarity ≈ 0.15 → `fail`. Apply to `bottler_name` and `brand_name` fields specifically (where company-type suffixes are common).
-- **Affects:** `lib/validators/semantic.ts` (or a new pre-processor specific to company names)
-
 ### 🟠 BUG-02 — Extraction truncates compound brand names
 
 - **Case:** `01-pass-01` (Old Cypress Distillery bourbon)
@@ -140,6 +124,11 @@ These categories all worked as designed and need no further action:
 ---
 
 ## Closed bugs
+
+### 🔴 BUG-01 — Shared-suffix mismatches downgraded to "warning" instead of "fail"
+- **Resolution:** Replaced the tiered `compareTextField` for `brand_name` and `bottler_name` with a new binary `compareCompanyName` (pass/fail only) in `lib/validators/semantic.ts`. Equality is `fuzzyEqual` (case/whitespace/apostrophe/dash normalized); anything non-equal is `fail`. No warning tier, no suffix stripping, no typo tolerance — the system can't distinguish OCR error from human error at the text-comparison layer, so mismatch always fails. OCR-side discrepancies (truncation, missed words) are deferred to the planned visual-verification feature instead of being papered over in code.
+- **Spec:** [`docs/specs/company-name-suffix-strip.md`](specs/company-name-suffix-strip.md). Filename retained from initial scoping; design landed on binary strict-equality after discussion (suffix stripping became dead code under "any mismatch fails").
+- **Tests:** 10 new cases in `evals/validators.test.ts` (`compareCompanyName — BUG-01` block) covering BUG-01 case, OCR truncation, suffix typo, core typo, case/whitespace normalization, punctuation strictness, null guards, no-warning invariant. New ground-truth fixture `evals/fixtures/ground-truth/bug-01-bottler-suffix-mismatch.json` for end-to-end pipeline coverage. All 146 tests passing.
 
 ### 🔵 INFRA-04 — No retry on Gemini 503 transient outages
 - **Resolution:** Server-side retry on 503 added inside `lib/gemini.ts` around the `generateContent` call. Up to 2 retries on `GEMINI_503_RETRY_DELAYS_MS = [5000, 10000]`, each logged via `console.warn`; original error rethrown unchanged on exhaustion. Non-503 errors are not retried.

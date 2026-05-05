@@ -67,6 +67,44 @@ export function similarity(a: string | null, b: string | null): number {
 }
 
 /**
+ * Strict-equality comparator for company-name fields (brand_name, bottler_name).
+ * Binary pass/fail — no warning tier, no similarity band. Equal-after-normalize
+ * is the only path to pass. Anything else fails.
+ *
+ * Why binary, not tiered: shared generic suffixes (e.g., "Distilling Co.")
+ * inflate similarity for unrelated companies and hide real mismatches in the
+ * warning band (BUG-01). The system can't reliably tell OCR error from human
+ * typo at the text-comparison layer; visual verification carries that load
+ * (`docs/specs/visual-verification.md`). For these two fields, mismatch
+ * always fails — the agent reviews and corrects.
+ *
+ * Wired only at brand_name and bottler_name call sites in spirits.ts. Other
+ * text fields (address, class/type, etc.) keep using compareTextField.
+ *
+ * See `docs/specs/company-name-suffix-strip.md` for the design discussion.
+ */
+export function compareCompanyName(
+  submitted: string | null,
+  extracted: string | null,
+  fieldLabel: string
+): { match: boolean; status: 'pass' | 'fail'; note?: string } {
+  if (!extracted) {
+    return { match: false, status: 'fail', note: `${fieldLabel} not found on label` };
+  }
+  if (!submitted) {
+    return { match: false, status: 'fail', note: `${fieldLabel} not provided in application` };
+  }
+  if (fuzzyEqual(submitted, extracted)) {
+    return { match: true, status: 'pass' };
+  }
+  return {
+    match: false,
+    status: 'fail',
+    note: `${fieldLabel} mismatch: submitted "${submitted}" vs label "${extracted}"`,
+  };
+}
+
+/**
  * Compare two text fields and return a match result with a status.
  * - Exact normalized match → pass
  * - High similarity (≥0.85) → pass with note

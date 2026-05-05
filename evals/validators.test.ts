@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { parseABV, compareABV, compareNetContents, compareGovernmentWarning, GOVERNMENT_WARNING_OFFICIAL } from '@/lib/validators/regex';
-import { fuzzyEqual, compareTextField } from '@/lib/validators/semantic';
+import { fuzzyEqual, compareTextField, compareCompanyName } from '@/lib/validators/semantic';
 import { isApprovedClassType } from '@/lib/validators/spirits';
 
 // ─── ABV ────────────────────────────────────────────────────────────────────
@@ -196,6 +196,98 @@ describe("fuzzyEqual", () => {
     expect(fuzzyEqual("Old Tom", "New Tom")).toBe(false);
   });
 });
+
+// ─── compareCompanyName — BUG-01 strict-match comparator ────────────────────
+//
+// Binary pass/fail for brand_name and bottler_name only. No warning tier.
+// Anything other than fuzzyEqual (case/whitespace/apostrophe/dash normalized)
+// is a fail. Visual verification (docs/specs/visual-verification.md) is the
+// catch path for OCR-side discrepancies; the text comparator stays strict so
+// it never silently papers over agent-form errors.
+// See docs/specs/company-name-suffix-strip.md for the design discussion.
+
+describe("compareCompanyName — BUG-01", () => {
+  it("fails on shared-suffix mismatch — the BUG-01 case", () => {
+    // Pre-fix: similarity ~0.69 lands in the warning band → false-warning on
+    // totally unrelated companies. Post-fix: not fuzzyEqual → fail.
+    const r = compareCompanyName("Wrong Distilling Co.", "Prairie Wind Distilling Co.", "Bottler Name");
+    expect(r.status).toBe("fail");
+    expect(r.note).toMatch(/Wrong Distilling Co\./);
+    expect(r.note).toMatch(/Prairie Wind Distilling Co\./);
+  });
+
+  it("fails on OCR truncation (label vs full form name)", () => {
+    // E.g., Gemini truncated "Old Cypress Distillery" to "Old Cypress" (BUG-02).
+    // We deliberately do NOT try to detect OCR truncation here — the text
+    // comparator can't distinguish OCR error from human error. Visual
+    // verification will surface this to the agent (planned, see spec).
+    const r = compareCompanyName("Old Cypress Distillery", "Old Cypress", "Brand Name");
+    expect(r.status).toBe("fail");
+  });
+
+  it("fails on suffix typo — does not paper over near-misses", () => {
+    // "Distilery" vs "Distillery" (one missing l). We refuse to treat this as
+    // a match: typo on the form is exactly what the system needs to surface.
+    const r = compareCompanyName("Old Tom Distillery", "Old Tom Distilery", "Bottler Name");
+    expect(r.status).toBe("fail");
+  });
+
+  it("fails on core-name typo — agent form errors are caught, not papered over", () => {
+    const r = compareCompanyName("Jak Daniels", "Jack Daniels", "Brand Name");
+    expect(r.status).toBe("fail");
+  });
+
+  it("passes on case-only difference (normalize handles it)", () => {
+    const r = compareCompanyName("OLD TOM DISTILLERY", "Old Tom Distillery", "Brand Name");
+    expect(r.status).toBe("pass");
+  });
+
+  it("passes on whitespace variant (normalize collapses runs of whitespace)", () => {
+    const r = compareCompanyName("Jack Daniel's  Distillery", "Jack Daniel's Distillery", "Brand Name");
+    expect(r.status).toBe("pass");
+  });
+
+  // Note: normalize() in semantic.ts does NOT currently fold curly quotes
+  // (U+2018 / U+2019) to a straight apostrophe — only ASCII apostrophe and
+  // backtick. So `"Jack Daniel’s"` (curly) vs `"Jack Daniel's"` (straight)
+  // currently fails compareCompanyName. That's a separate normalize-wide
+  // gap (would affect every field using normalize), tracked for a future
+  // change — deliberately out of scope for BUG-01.
+
+  it("fails on punctuation-only difference — strict because we can't tell OCR from human", () => {
+    // "Co." vs "Co" — could be either side dropping/adding a period. We default
+    // to fail; visual verification is the right place to disambiguate.
+    const r = compareCompanyName("Old Tom Co.", "Old Tom Co", "Bottler Name");
+    expect(r.status).toBe("fail");
+  });
+
+  it("fails when extracted is null", () => {
+    const r = compareCompanyName("Old Tom Distillery", null, "Brand Name");
+    expect(r.status).toBe("fail");
+    expect(r.note).toMatch(/not found on label/i);
+  });
+
+  it("fails when submitted is null", () => {
+    const r = compareCompanyName(null, "Old Tom Distillery", "Brand Name");
+    expect(r.status).toBe("fail");
+    expect(r.note).toMatch(/not provided in application/i);
+  });
+
+  it("never returns warning — binary by design", () => {
+    const cases: Array<[string, string]> = [
+      ["Old Tom Distillery", "Old Tom Distilery"],     // typo
+      ["Wrong Distilling Co.", "Prairie Wind Distilling Co."], // BUG-01
+      ["Old Cypress Distillery", "Old Cypress"],       // truncation
+      ["Old Tom Co.", "Old Tom Co"],                   // punctuation
+    ];
+    for (const [s, e] of cases) {
+      const r = compareCompanyName(s, e, "Test");
+      expect(r.status, `for "${s}" vs "${e}"`).not.toBe("warning");
+    }
+  });
+});
+
+// ─── compareTextField (unchanged — still tiered for non-company fields) ─────
 
 describe("compareTextField", () => {
   it("passes on exact match", () => {

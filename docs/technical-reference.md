@@ -67,12 +67,13 @@ Image + FormData
   3. Non-100% match returns `warning` with a Levenshtein edit-distance signal so the agent gets a magnitude hint. Bias intentional: false-positive flags are cheaper than false-negative passes for statutorily exact text.
 
 ### Semantic Validator — `lib/validators/semantic.ts`
-- `normalize` — lowercase, collapse whitespace, normalize apostrophes/dashes
+- `normalize` — lowercase, collapse whitespace, normalize apostrophes/dashes (note: only ASCII apostrophe and backtick currently — curly U+2018/U+2019 are not folded; tracked as a future improvement)
 - `fuzzyEqual` — case-insensitive exact match (handles "STONE'S THROW" vs "Stone's Throw")
 - `fuzzyContains` — partial match for address fields
 - `similarity` — Levenshtein distance ratio (0–1)
 - `levenshtein` — raw Levenshtein edit distance (exposed for user-facing magnitude signals like "differs by N characters")
-- `compareTextField` — tiered result: pass (≥0.85), warning (0.6–0.85), fail (<0.6)
+- `compareTextField` — tiered result: pass (≥0.85), warning (0.6–0.85), fail (<0.6). Used for `bottler_address`, `class_type`, `country_of_origin`.
+- `compareCompanyName` — binary pass/fail (no warning tier). Equal-after-normalize via `fuzzyEqual` is the only path to pass; anything else fails. Wired only at `brand_name` and `bottler_name`. See BUG-01 / [`docs/specs/company-name-suffix-strip.md`](specs/company-name-suffix-strip.md). The strict-binary stance is deliberate: text comparison can't reliably distinguish OCR error from human typo, so mismatch always fails and the planned visual-verification feature is the catch path for OCR-side discrepancies.
 
 ### Spirits Validator — `lib/validators/spirits.ts`
 - `APPROVED_CLASS_TYPES` — representative list of approved 27 CFR Part 5 designations
@@ -146,10 +147,10 @@ Rule-based label-only checks. Each rule is a pure function returning `Compliance
 ---
 
 ## Eval Suite
-- **135 tests passing** across 5 test files
-- `evals/validators.test.ts` — unit tests for regex + semantic + spirits class/type validators
+- **146 tests passing** across 5 test files
+- `evals/validators.test.ts` — unit tests for regex + semantic + spirits class/type validators (incl. `compareCompanyName` BUG-01 strict-match block)
 - `evals/compliance.test.ts` — per-rule advisory tests + orchestrator tests
 - `evals/parsers.test.ts` — JSON/CSV parser tests (incl. optional `aged_years`)
 - `evals/pipeline.test.ts` — fixture-based end-to-end tests + edge cases + advisory/headline-independence tests
 - `evals/gemini-retry.test.ts` — Gemini 503 retry path (1×, 2×, exhaustion, no-retry-on-non-503, message-text fallback detection)
-- `evals/fixtures/ground-truth/` — 6 JSON fixtures: all-pass, ABV mismatch, wrong gov warning capitalization, brand name case mismatch, missing gov warning, import missing country of origin
+- `evals/fixtures/ground-truth/` — 7 JSON fixtures: all-pass, ABV mismatch, wrong gov warning capitalization, brand name case mismatch, missing gov warning, import missing country of origin, BUG-01 bottler suffix mismatch

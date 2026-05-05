@@ -4,7 +4,7 @@
 import type { ApplicationData, ExtractionResult, FieldResult, ComplianceFlag } from '@/types/cola';
 import { COLA_FIELD_LABELS } from '@/types/cola';
 import { compareABV, compareNetContents, compareGovernmentWarning, GOVERNMENT_WARNING_OFFICIAL } from './regex';
-import { compareTextField } from './semantic';
+import { compareTextField, compareCompanyName } from './semantic';
 import { runComplianceChecks } from './compliance';
 
 // Approved class/type designations from 27 CFR Part 5.22 and 5.35
@@ -118,8 +118,8 @@ export function validateSpiritsLabel(
 ): { fields: FieldResult[]; advisories: ComplianceFlag[] } {
   const results: FieldResult[] = [];
 
-  // 1. Brand Name — fuzzy match
-  const brandResult = compareTextField(formData.brand_name, extraction.brand_name, 'Brand Name');
+  // 1. Brand Name — strict match (BUG-01: see docs/specs/company-name-suffix-strip.md)
+  const brandResult = compareCompanyName(formData.brand_name, extraction.brand_name, 'Brand Name');
   results.push({
     field: 'brand_name',
     label: COLA_FIELD_LABELS.brand_name,
@@ -203,8 +203,8 @@ export function validateSpiritsLabel(
     });
   }
 
-  // 5. Bottler / Producer Name — fuzzy
-  const bottlerNameResult = compareTextField(formData.bottler_name, extraction.bottler_name, 'Bottler Name');
+  // 5. Bottler / Producer Name — strict match (BUG-01: see docs/specs/company-name-suffix-strip.md)
+  const bottlerNameResult = compareCompanyName(formData.bottler_name, extraction.bottler_name, 'Bottler Name');
   results.push({
     field: 'bottler_name',
     label: COLA_FIELD_LABELS.bottler_name,

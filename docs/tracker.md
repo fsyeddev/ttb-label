@@ -22,7 +22,7 @@ Agents upload a label image + application data; the system checks they match and
 - Unit normalization for net contents (mL ↔ L)
 - Fuzzy matching for text fields — handles minor formatting differences and typos
 - Compliance advisories layer — surfaces TTB rule observations (bottle size, age statement, statement of composition, state of distillation, production statement phrasing, fanciful name) as informational flags alongside the cross-validation result. Never affects the PASS / FAIL / REVIEW headline.
-- 135 automated tests passing (unit, parser, advisory, end-to-end pipeline, and Gemini retry)
+- 146 automated tests passing (unit, parser, advisory, end-to-end pipeline, Gemini retry, and BUG-01 strict-match comparator)
 
 ---
 
@@ -37,6 +37,7 @@ Agents upload a label image + application data; the system checks they match and
 Each item below has a spec in [docs/specs/](specs/). A spec must be Approved before code is written.
 
 - ~~**[Compliance Advisories](specs/compliance-advisories.md)** — surface TTB rule violations (bottle size, age statement, composition statement, etc.) as informational flags alongside the cross-validation results, without affecting the PASS / FAIL / REVIEW headline verdict~~ ✅ Done
+- **[Visual verification](specs/visual-verification.md)** — show original label thumbnail + per-field cropped regions on the results screen so agents can confirm extraction visually instead of trusting text comparison alone — *spec drafted, awaiting approval*
 - **[Wine support](specs/wine.md)** — 27 CFR Part 4 validation rules — *spec drafted, awaiting approval*
 - **[Beer / Malt beverage support](specs/beer-malt.md)** — 27 CFR Part 7 validation rules — *placeholder*
 - **[Batch upload](specs/batch-upload.md)** — submit multiple applications at once, aggregate results view, CSV export — *placeholder*

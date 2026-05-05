@@ -14,6 +14,7 @@ import wrongWarning from './fixtures/ground-truth/wrong-gov-warning.json';
 import brandCaseMismatch from './fixtures/ground-truth/brand-name-case-mismatch.json';
 import missingWarning from './fixtures/ground-truth/missing-gov-warning.json';
 import importMissingOrigin from './fixtures/ground-truth/import-missing-origin.json';
+import bug01BottlerSuffix from './fixtures/ground-truth/bug-01-bottler-suffix-mismatch.json';
 
 type Fixture = {
   id: string;
@@ -31,6 +32,7 @@ const FIXTURES: Fixture[] = [
   brandCaseMismatch,
   missingWarning,
   importMissingOrigin,
+  bug01BottlerSuffix,
 ] as Fixture[];
 
 function getOverall(fields: { status: FieldStatus }[]): OverallStatus {
