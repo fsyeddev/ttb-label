@@ -166,8 +166,14 @@ export function compareGovernmentWarning(submitted: string | null, extracted: st
   // "CONSUMP- TION" → "CONSUMPTION", "CONSUMP-TION" → "CONSUMPTION", "GEN- ERAL" → "GENERAL"
   const joinHyphens = (s: string) => s.replace(/([A-Za-z])\s*-\s*([A-Za-z])/g, '$1$2').replace(/\s+/g, ' ').trim();
 
-  const officialNorm = joinHyphens(GOVERNMENT_WARNING_OFFICIAL);
-  const extractedNorm = joinHyphens(ext);
+  // Case-fold the body before comparing. The prefix-CAPS gate above already
+  // enforces "GOVERNMENT WARNING" must appear in capitals; the body itself
+  // (per 27 CFR 16.21) doesn't carry a casing requirement, and many real
+  // labels (e.g., Jack Daniel's Tennessee Fire) print the whole warning in
+  // ALL CAPS. Without this fold, every cap'd body counted as ~200 substitution
+  // edits and hard-failed. See docs/specs/govwarn-case-insensitive-body.md.
+  const officialNorm = joinHyphens(GOVERNMENT_WARNING_OFFICIAL).toLowerCase();
+  const extractedNorm = joinHyphens(ext).toLowerCase();
 
   if (officialNorm === extractedNorm) {
     return { match: true, status: 'pass' };
