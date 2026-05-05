@@ -75,14 +75,43 @@ export default function LabelVerifier() {
           net_contents: serializeNetContents(formData.net_contents),
         })
       );
+      const fetchStart = performance.now();
       const res = await fetch('/api/analyze', {
         method: 'POST',
         body,
         signal: controller.signal,
       });
       const json = await res.json();
+      const fetchTotalMs = Math.round(performance.now() - fetchStart);
       if (!res.ok) throw new Error(json.error ?? 'Server error. Please try again.');
-      setResult(json as AnalysisResponse);
+      const analysis = json as AnalysisResponse;
+
+      // Per-phase breakdown to the browser console so slow paths are visible
+      // without having to re-instrument by hand. The "network/upload" row is
+      // total fetch minus total server time — that's everything we don't
+      // explicitly bucket (request upload, response download, browser overhead).
+      if (analysis.timings) {
+        const t = analysis.timings;
+        const networkMs = Math.max(0, fetchTotalMs - t.totalServerMs);
+        // eslint-disable-next-line no-console
+        console.groupCollapsed(
+          `[verify] ${imageFile.name} — ${fetchTotalMs}ms total (image ${t.imageSizeKB} KB)`
+        );
+        // eslint-disable-next-line no-console
+        console.table({
+          'form parse (server)': { ms: t.formParseMs },
+          'image decode + base64 (server)': { ms: t.imageDecodeMs },
+          'Gemini extraction (server)': { ms: t.geminiExtractionMs },
+          'validation (server)': { ms: t.validationMs },
+          'server total': { ms: t.totalServerMs },
+          'network / upload / download (client↔server)': { ms: networkMs },
+          'fetch total (client)': { ms: fetchTotalMs },
+        });
+        // eslint-disable-next-line no-console
+        console.groupEnd();
+      }
+
+      setResult(analysis);
       setVerifyFinished(true);
       // Brief beat so the final stage check appears before the results page swap.
       setTimeout(() => setAppState('results'), 350);
