@@ -4,7 +4,12 @@ import { useCallback, useRef, useState } from 'react';
 import type { ApplicationData } from '@/types/cola';
 import { parseJSONImport } from '@/lib/parsers/json-import';
 import { parseCSVImport } from '@/lib/parsers/csv-import';
-import { sanitizeNumericInput, type AbvUnit } from '@/lib/ui/form-helpers';
+import {
+  sanitizeNumericInput,
+  parseAbvString,
+  extractNumericPart,
+  type AbvUnit,
+} from '@/lib/ui/form-helpers';
 
 export type { AbvUnit };
 
@@ -51,12 +56,20 @@ export default function ApplicationForm({
         return;
       }
       if (result.data) {
-        onChange(result.data);
+        // ABV and Net Contents are stored as digits-only in the form's input
+        // state. Imported strings carry units ("45% Alc./Vol.", "750 mL"); we
+        // strip them here so the inputs render correctly. data.abv itself is
+        // overwritten at submit time by serializeAbv(abvValue, abvUnit).
+        const { value: abvVal, unit: abvUnitParsed } = parseAbvString(result.data.abv);
+        onAbvValueChange(abvVal);
+        onAbvUnitChange(abvUnitParsed);
+        const cleanedNetContents = extractNumericPart(result.data.net_contents);
+        onChange({ ...result.data, abv: '', net_contents: cleanedNetContents });
         setImportWarnings(result.warnings);
         setImportSuccess(true);
       }
     },
-    [onChange]
+    [onChange, onAbvValueChange, onAbvUnitChange]
   );
 
   const onFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {

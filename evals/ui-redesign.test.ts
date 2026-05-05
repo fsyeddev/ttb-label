@@ -7,7 +7,12 @@
 //   docs/specs/results-redesign.md
 
 import { describe, it, expect } from 'vitest';
-import { sanitizeNumericInput, serializeAbv } from '@/lib/ui/form-helpers';
+import {
+  sanitizeNumericInput,
+  serializeAbv,
+  parseAbvString,
+  extractNumericPart,
+} from '@/lib/ui/form-helpers';
 import { deriveStages, progressRatio } from '@/lib/ui/verifying';
 import { compareCompanyName } from '@/lib/validators/semantic';
 import { validateSpiritsLabel } from '@/lib/validators/spirits';
@@ -30,18 +35,84 @@ describe('sanitizeNumericInput — homepage ABV / Net Contents', () => {
     expect(sanitizeNumericInput('40.5')).toBe('40.5');
   });
 
-  it('drops repeated decimal points after the first', () => {
+  it('drops repeated decimal points after the first and clamps to 2 dp', () => {
+    // First dot wins; subsequent dots are stripped from the decimal tail and
+    // the result is clamped to 2 decimal places.
     expect(sanitizeNumericInput('40.5.7')).toBe('40.57');
-    expect(sanitizeNumericInput('1.2.3.4')).toBe('1.234');
+    expect(sanitizeNumericInput('1.2.3.4')).toBe('1.23');
+  });
+
+  it('caps decimal precision at 2 places (truncate, do not round)', () => {
+    expect(sanitizeNumericInput('99.99')).toBe('99.99');
+    expect(sanitizeNumericInput('99.999')).toBe('99.99');
+    expect(sanitizeNumericInput('40.5670')).toBe('40.56');
   });
 
   it('keeps leading zero values', () => {
     expect(sanitizeNumericInput('0.5')).toBe('0.5');
   });
 
+  it('preserves a trailing dot mid-typing (e.g., user typed "40.")', () => {
+    expect(sanitizeNumericInput('40.')).toBe('40.');
+  });
+
   it('returns empty for fully-non-numeric input', () => {
     expect(sanitizeNumericInput('abc')).toBe('');
     expect(sanitizeNumericInput('')).toBe('');
+  });
+});
+
+// ─── parseAbvString — JSON / CSV import ─────────────────────────────────────
+
+describe('parseAbvString — splits imported ABV string into value + unit', () => {
+  it('parses "45% Alc./Vol." as percent unit with numeric value 45', () => {
+    expect(parseAbvString('45% Alc./Vol.')).toEqual({ value: '45', unit: 'percent' });
+  });
+
+  it('parses "70 Proof" as proof unit with numeric value 70', () => {
+    expect(parseAbvString('70 Proof')).toEqual({ value: '70', unit: 'proof' });
+  });
+
+  it('handles decimals on either side of the unit', () => {
+    expect(parseAbvString('45.5% Alc./Vol.')).toEqual({ value: '45.5', unit: 'percent' });
+    expect(parseAbvString('0.5 Proof')).toEqual({ value: '0.5', unit: 'proof' });
+  });
+
+  it('defaults to percent when no unit token is present', () => {
+    expect(parseAbvString('45')).toEqual({ value: '45', unit: 'percent' });
+  });
+
+  it('handles empty / null inputs without throwing', () => {
+    expect(parseAbvString('')).toEqual({ value: '', unit: 'percent' });
+    expect(parseAbvString(null)).toEqual({ value: '', unit: 'percent' });
+    expect(parseAbvString(undefined)).toEqual({ value: '', unit: 'percent' });
+  });
+
+  it('proof detection is case-insensitive', () => {
+    expect(parseAbvString('80 PROOF').unit).toBe('proof');
+    expect(parseAbvString('80 proof').unit).toBe('proof');
+  });
+});
+
+// ─── extractNumericPart — Net Contents import ───────────────────────────────
+
+describe('extractNumericPart — strips units from imported numeric strings', () => {
+  it('extracts the numeric token from "750 mL"', () => {
+    expect(extractNumericPart('750 mL')).toBe('750');
+  });
+
+  it('extracts "0" from "0 mL"', () => {
+    expect(extractNumericPart('0 mL')).toBe('0');
+  });
+
+  it('extracts decimals like "1.5 mL"', () => {
+    expect(extractNumericPart('1.5 mL')).toBe('1.5');
+  });
+
+  it('returns empty when no numeric token is present', () => {
+    expect(extractNumericPart('mL')).toBe('');
+    expect(extractNumericPart('')).toBe('');
+    expect(extractNumericPart(null)).toBe('');
   });
 });
 

@@ -9,6 +9,7 @@ import type {
   COLAField,
 } from '@/types/cola';
 import LabelModal from './LabelModal';
+import { GOVERNMENT_WARNING_OFFICIAL } from '@/lib/validators/regex';
 
 interface ResultsCardProps {
   result: AnalysisResponse;
@@ -80,6 +81,14 @@ const FIELD_ORDER: COLAField[] = [
 
 function FieldCard({ field }: { field: FieldResult }) {
   const styles = STATUS_STYLES[field.status];
+  // Front-end-only override: the Government Warning card's "Expected" value
+  // currently comes from spirits.ts as the placeholder string
+  // "Auto-checked against official TTB text". We swap it for the real official
+  // text here so the side-by-side comparison is meaningful to the agent.
+  // Pure UI substitution — does NOT change validation logic.
+  const expectedDisplay =
+    field.field === 'government_warning' ? GOVERNMENT_WARNING_OFFICIAL : field.submitted;
+
   return (
     <div className="relative rounded-md border border-gray-200 bg-white shadow-sm overflow-hidden">
       <div className={`absolute inset-y-0 left-0 w-1 ${styles.accent}`} aria-hidden="true" />
@@ -101,7 +110,7 @@ function FieldCard({ field }: { field: FieldResult }) {
               Expected
             </p>
             <p className="text-gray-900 wrap-break-word">
-              {field.submitted || <em className="text-gray-400">Not provided</em>}
+              {expectedDisplay || <em className="text-gray-400">Not provided</em>}
             </p>
           </div>
           <div>
