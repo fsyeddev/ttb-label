@@ -199,12 +199,17 @@ describe("fuzzyEqual", () => {
 
 // ─── compareCompanyName — BUG-01 strict-match comparator ────────────────────
 //
-// Binary pass/fail for brand_name and bottler_name only. No warning tier.
-// Anything other than fuzzyEqual (case/whitespace/apostrophe/dash normalized)
-// is a fail. Visual verification (docs/specs/visual-verification.md) is the
-// catch path for OCR-side discrepancies; the text comparator stays strict so
-// it never silently papers over agent-form errors.
-// See docs/specs/company-name-suffix-strip.md for the design discussion.
+// Three outcomes for brand_name and bottler_name:
+//   - pass: trimmed/whitespace-collapsed strings are byte-equal, OR the only
+//     difference is fuzzyEqual-level (apostrophe / dash variants).
+//   - warning: letters are identical, only ASCII case differs (added with the
+//     w03 results redesign — see docs/specs/results-redesign.md).
+//   - fail: anything beyond that. BUG-01 invariant — no similarity band.
+//
+// Visual verification (docs/specs/visual-verification.md) remains the catch
+// path for OCR-side discrepancies. The text comparator stays strict so it
+// never silently papers over agent-form errors.
+// See docs/specs/company-name-suffix-strip.md for the original design.
 
 describe("compareCompanyName — BUG-01", () => {
   it("fails on shared-suffix mismatch — the BUG-01 case", () => {
@@ -237,9 +242,16 @@ describe("compareCompanyName — BUG-01", () => {
     expect(r.status).toBe("fail");
   });
 
-  it("passes on case-only difference (normalize handles it)", () => {
+  it("warns on case-only difference (results-redesign: surfaced as REVIEW)", () => {
     const r = compareCompanyName("OLD TOM DISTILLERY", "Old Tom Distillery", "Brand Name");
+    expect(r.status).toBe("warning");
+    expect(r.note).toMatch(/Casing differs but text matches/);
+  });
+
+  it("passes on exact match (case-sensitive)", () => {
+    const r = compareCompanyName("Old Tom Distillery", "Old Tom Distillery", "Brand Name");
     expect(r.status).toBe("pass");
+    expect(r.note).toBeUndefined();
   });
 
   it("passes on whitespace variant (normalize collapses runs of whitespace)", () => {
@@ -273,7 +285,10 @@ describe("compareCompanyName — BUG-01", () => {
     expect(r.note).toMatch(/not provided in application/i);
   });
 
-  it("never returns warning — binary by design", () => {
+  it("never returns warning for real text mismatches — BUG-01 invariant", () => {
+    // Warning is reserved exclusively for casing-only divergence. Anything else
+    // that isn't fuzzyEqual must hard-fail; we never let a typo, truncation,
+    // shared-suffix collision, or punctuation drift slip into the warning band.
     const cases: Array<[string, string]> = [
       ["Old Tom Distillery", "Old Tom Distilery"],     // typo
       ["Wrong Distilling Co.", "Prairie Wind Distilling Co."], // BUG-01
@@ -282,8 +297,19 @@ describe("compareCompanyName — BUG-01", () => {
     ];
     for (const [s, e] of cases) {
       const r = compareCompanyName(s, e, "Test");
-      expect(r.status, `for "${s}" vs "${e}"`).not.toBe("warning");
+      expect(r.status, `for "${s}" vs "${e}"`).toBe("fail");
     }
+  });
+
+  it("warns on case-difference even with extra whitespace", () => {
+    // Letters identical, only ASCII case + whitespace differ → warning.
+    const r = compareCompanyName("OLD CYPRESS  DISTILLERY", "Old Cypress Distillery", "Brand Name");
+    expect(r.status).toBe("warning");
+  });
+
+  it("preserves warning note copy used by the w03 wireframe", () => {
+    const r = compareCompanyName("Old Cypress Distillery", "OLD CYPRESS DISTILLERY", "Bottler Name");
+    expect(r.note).toBe("Casing differs but text matches. Likely acceptable — confirm.");
   });
 });
 
