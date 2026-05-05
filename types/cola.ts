@@ -90,6 +90,18 @@ export interface ComplianceFlag {
   relatedField?: COLAField;    // optional anchor to a specific field for UI highlighting
 }
 
+// Per-phase wall-clock timings, populated by /api/analyze and surfaced to
+// the browser console by the client so the slow path is visible without
+// having to instrument by hand. All values in milliseconds.
+export interface AnalysisTimings {
+  formParseMs: number;        // multipart/FormData decode on the server
+  imageDecodeMs: number;      // arrayBuffer + base64 encode (CPU-bound, scales with image size)
+  geminiExtractionMs: number; // round-trip to Gemini including any retries
+  validationMs: number;       // cross-validation + compliance checks (pure JS)
+  totalServerMs: number;      // sum of phases + overhead — equals processingMs
+  imageSizeKB: number;        // uploaded image size, useful when triaging slow runs
+}
+
 // Full analysis response from /api/analyze
 export interface AnalysisResponse {
   jobId: string;
@@ -98,6 +110,7 @@ export interface AnalysisResponse {
   advisories: ComplianceFlag[];    // informational; never affects overallStatus
   overallStatus: OverallStatus;
   extraction: ExtractionResult;
+  timings?: AnalysisTimings;
   error?: string;
 }
 

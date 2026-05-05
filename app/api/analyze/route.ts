@@ -2,13 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { extractLabelData } from '@/lib/gemini';
 import { validateSpiritsLabel } from '@/lib/validators/spirits';
-import type { AnalysisResponse, OverallStatus } from '@/types/cola';
+import type { AnalysisResponse, AnalysisTimings, OverallStatus } from '@/types/cola';
 
 export async function POST(req: NextRequest) {
   const start = Date.now();
+  // Per-phase markers so the response carries a breakdown of where time went.
+  // Surfaced via response.timings; the client logs them to the browser console.
+  let formParseMs = 0;
+  let imageDecodeMs = 0;
+  let geminiExtractionMs = 0;
+  let validationMs = 0;
+  let imageSizeKB = 0;
 
   try {
+    const t0 = Date.now();
     const formData = await req.formData();
+    formParseMs = Date.now() - t0;
 
     // --- Image ---
     const imageFile = formData.get('labelImage') as File | null;
@@ -28,9 +37,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Image file too large. Maximum size is 10 MB.' }, { status: 400 });
     }
 
+    imageSizeKB = Math.round(imageFile.size / 1024);
+
     // Convert to base64 for Gemini
+    const t1 = Date.now();
     const imageBytes = await imageFile.arrayBuffer();
     const imageBase64 = Buffer.from(imageBytes).toString('base64');
+    imageDecodeMs = Date.now() - t1;
 
     // --- Application Form Data ---
     const applicationRaw = formData.get('applicationData') as string | null;
@@ -46,10 +59,14 @@ export async function POST(req: NextRequest) {
     }
 
     // --- Gemini Extraction ---
+    const t2 = Date.now();
     const extraction = await extractLabelData(imageBase64, imageFile.type);
+    geminiExtractionMs = Date.now() - t2;
 
     // --- Validation (cross-validation fields + compliance advisories) ---
+    const t3 = Date.now();
     const { fields, advisories } = validateSpiritsLabel(applicationData, extraction);
+    validationMs = Date.now() - t3;
 
     // --- Determine overall status — derived from FieldResult[] only.
     // Advisories are informational and never affect the headline verdict. ---
@@ -59,13 +76,24 @@ export async function POST(req: NextRequest) {
     if (hasFailures) overallStatus = 'FAIL';
     else if (hasWarnings) overallStatus = 'REVIEW';
 
+    const totalServerMs = Date.now() - start;
+    const timings: AnalysisTimings = {
+      formParseMs,
+      imageDecodeMs,
+      geminiExtractionMs,
+      validationMs,
+      totalServerMs,
+      imageSizeKB,
+    };
+
     const response: AnalysisResponse = {
       jobId: uuidv4(),
-      processingMs: Date.now() - start,
+      processingMs: totalServerMs,
       fields,
       advisories,
       overallStatus,
       extraction,
+      timings,
     };
 
     return NextResponse.json(response);
