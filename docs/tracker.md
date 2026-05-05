@@ -33,6 +33,11 @@ Agents upload a label image + application data; the system checks they match and
 - ~~Connect GitHub repo (`fsyeddev/ttb-label`) to Vercel for auto-deploy on push~~ ✅ Done
 - ~~Expand approved class/type list to cover real-world labels (flavored class + common cordials)~~ ✅ Done — minor/specialty designations deliberately excluded
 
+### In progress (branch `ui-redesign-2026-05`)
+- **[Homepage redesign (w01)](specs/homepage-redesign.md)** — two-column layout, suffixed numeric ABV / Net Contents, conditional Country of Origin, Single label / Batch upload toggle (batch disabled), no inline hints, no Aged Years input.
+- **[Verifying screen (w02)](specs/verifying-screen.md)** — dedicated loading view with stage checklist + elapsed bar; cancel via AbortController.
+- **[Results redesign (w03)](specs/results-redesign.md)** — accent-bar field cards, label thumbnail + modal, casing-only mismatch surfaces as REVIEW.
+
 ### Future
 Each item below has a spec in [docs/specs/](specs/). A spec must be Approved before code is written.
 

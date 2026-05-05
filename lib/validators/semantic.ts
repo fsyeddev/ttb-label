@@ -68,33 +68,48 @@ export function similarity(a: string | null, b: string | null): number {
 
 /**
  * Strict-equality comparator for company-name fields (brand_name, bottler_name).
- * Binary pass/fail — no warning tier, no similarity band. Equal-after-normalize
- * is the only path to pass. Anything else fails.
+ * Three outcomes only:
+ *   - pass: trimmed strings are byte-equal.
+ *   - warning: strings differ only by case / punctuation / whitespace
+ *     (i.e., fuzzyEqual is true). Surfaced as REVIEW so the agent confirms.
+ *   - fail: anything beyond that. BUG-01 invariant — no similarity band.
  *
- * Why binary, not tiered: shared generic suffixes (e.g., "Distilling Co.")
- * inflate similarity for unrelated companies and hide real mismatches in the
- * warning band (BUG-01). The system can't reliably tell OCR error from human
- * typo at the text-comparison layer; visual verification carries that load
- * (`docs/specs/visual-verification.md`). For these two fields, mismatch
- * always fails — the agent reviews and corrects.
+ * The narrow warning tier was added with the w03 results redesign so casing-only
+ * mismatches stop being silent passes. Real text mismatches still hard-fail —
+ * see `docs/specs/results-redesign.md` and `docs/specs/company-name-suffix-strip.md`.
  *
  * Wired only at brand_name and bottler_name call sites in spirits.ts. Other
  * text fields (address, class/type, etc.) keep using compareTextField.
- *
- * See `docs/specs/company-name-suffix-strip.md` for the design discussion.
  */
 export function compareCompanyName(
   submitted: string | null,
   extracted: string | null,
   fieldLabel: string
-): { match: boolean; status: 'pass' | 'fail'; note?: string } {
+): { match: boolean; status: 'pass' | 'fail' | 'warning'; note?: string } {
   if (!extracted) {
     return { match: false, status: 'fail', note: `${fieldLabel} not found on label` };
   }
   if (!submitted) {
     return { match: false, status: 'fail', note: `${fieldLabel} not provided in application` };
   }
+  // Whitespace-collapsed comparison so a stray double-space alone doesn't
+  // trip the casing check.
+  const sCollapsed = submitted.trim().replace(/\s+/g, ' ');
+  const eCollapsed = extracted.trim().replace(/\s+/g, ' ');
+  if (sCollapsed === eCollapsed) {
+    return { match: true, status: 'pass' };
+  }
+  if (sCollapsed.toLowerCase() === eCollapsed.toLowerCase()) {
+    // Letters identical, only case changed.
+    return {
+      match: true,
+      status: 'warning',
+      note: 'Casing differs but text matches. Likely acceptable — confirm.',
+    };
+  }
   if (fuzzyEqual(submitted, extracted)) {
+    // Apostrophe / dash / other normalize-equivalent variants. Treat as pass —
+    // this is below the bar where an agent should pause.
     return { match: true, status: 'pass' };
   }
   return {

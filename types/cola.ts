@@ -19,8 +19,8 @@ export const COLA_FIELD_LABELS: Record<COLAField, string> = {
   class_type: 'Class / Type Designation',
   abv: 'Alcohol by Volume (ABV)',
   net_contents: 'Net Contents',
-  bottler_name: 'Bottler / Producer Name',
-  bottler_address: 'Bottler / Producer Address',
+  bottler_name: 'Bottler Name',
+  bottler_address: 'Bottler Address',
   country_of_origin: 'Country of Origin',
   government_warning: 'Government Warning Statement',
 };
