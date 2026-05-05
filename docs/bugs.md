@@ -17,6 +17,14 @@ Issues uncovered while running the manually-generated label fixtures against the
 
 ## Open bugs
 
+### 🟠 BUG-09 — Government warning hard-fails when body is set in ALL CAPS
+
+- **Case observed live:** Jack Daniel's Tennessee Fire (`labels/EVALS/Jack_Tennessee_Fire.json`)
+- **Symptom:** Submitted form is correct, OCR extracted the warning word-for-word, but the body is printed entirely in caps on the label. Comparator returned `fail` with `differs by 209 characters` because every body letter counted as a Levenshtein substitution edit against the mixed-case official text.
+- **Why it matters:** Many real labels typeset the whole warning in caps. The prior comparator silently treated case as wording divergence and forced agents to manually review compliant labels.
+- **Fix scope (this branch):** `compareGovernmentWarning` lowercases both sides after `joinHyphens`. Prefix-CAPS gate is unchanged. Spec: `docs/specs/govwarn-case-insensitive-body.md`. Evals added.
+- **Status:** ✅ Fixed (branch `fix-govwarn-case-insensitive-body`)
+
 ### 🟠 BUG-02 — Extraction truncates compound brand names
 
 - **Case:** `01-pass-01` (Old Cypress Distillery bourbon)

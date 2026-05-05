@@ -166,6 +166,40 @@ describe("compareGovernmentWarning", () => {
     expect(r.status).toBe("warning");
   });
 
+  // ─── BUG-09 — Case-insensitive body comparison ─────────────────────────────
+  // Regression observed live on Jack Daniel's Tennessee Fire: the entire
+  // warning body is set in ALL CAPS on the label. The prefix is correctly
+  // capitalized, the wording matches the statute word-for-word, but the
+  // Levenshtein distance counted every body letter as a substitution edit
+  // (~200 chars) and hard-failed. After the fold, body case is irrelevant.
+
+  it("passes when the entire body is set in ALL CAPS but wording is exact", () => {
+    const allCaps = GOVERNMENT_WARNING_OFFICIAL.toUpperCase();
+    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, allCaps);
+    expect(r.status).toBe("pass");
+  });
+
+  it("passes the actual Jack Daniel's Tennessee Fire extracted warning", () => {
+    // Verbatim from the OCR output reported on https://cola-verify.vercel.app
+    // (single-line, dashes joined, body in caps).
+    const jackDaniels =
+      "GOVERNMENT WARNING: (1) ACCORDING TO THE SURGEON GENERAL, WOMEN SHOULD NOT DRINK ALCOHOLIC BEVERAGES DURING PREGNANCY BECAUSE OF THE RISK OF BIRTH DEFECTS. (2) CONSUMPTION OF ALCOHOLIC BEVERAGES IMPAIRS YOUR ABILITY TO DRIVE A CAR OR OPERATE MACHINERY, AND MAY CAUSE HEALTH PROBLEMS.";
+    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, jackDaniels);
+    expect(r.status).toBe("pass");
+  });
+
+  it("still hard-fails when the prefix is title-cased — gate unaffected by body fold", () => {
+    // Title-case prefix must still be a hard fail; only the body comparison
+    // is case-insensitive after this gate.
+    const prefixTitleCase = GOVERNMENT_WARNING_OFFICIAL.replace(
+      "GOVERNMENT WARNING:",
+      "Government Warning:"
+    );
+    const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, prefixTitleCase);
+    expect(r.status).toBe("fail");
+    expect(r.note).toMatch(/all capital/i);
+  });
+
   it("fails when warning is wholly different text", () => {
     // CAPS prefix satisfied but the body is unrelated — distance well past
     // MAX_WARNING_DISTANCE. Should hard-fail, not route to review.
