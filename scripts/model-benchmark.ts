@@ -247,7 +247,7 @@ async function main() {
       let fieldPass = 0, fieldWarn = 0, fieldFail = 0, advisoryCount = 0;
 
       if (extraction) {
-        const { fields, advisories } = validateSpiritsLabel(tc.formData as Parameters<typeof validateSpiritsLabel>[0], extraction);
+        const { fields, advisories } = validateSpiritsLabel(tc.formData as unknown as Parameters<typeof validateSpiritsLabel>[0], extraction);
         advisoryCount = advisories.length;
         for (const f of fields) {
           if (f.status === 'pass') fieldPass++;
