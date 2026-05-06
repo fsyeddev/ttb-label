@@ -4,7 +4,7 @@ AI-powered label verification tool for TTB compliance agents. Upload a label ima
 
 ## Live Demo
 
-Deploy URL: _(add after Vercel deploy)_
+Deployed URL: https://cola-verify.vercel.app/
 
 ---
 
