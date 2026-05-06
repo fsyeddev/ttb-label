@@ -10,7 +10,9 @@
     "test:watch": "vitest",
     "generate:labels": "tsx --env-file=.env.local scripts/generate-test-labels.ts",
     "eval:quick": "tsx scripts/run-fixture-evals.ts --verbose --only 01-pass-01,02-mismatch-01,03-noncompliant-01,04-noncompliant-04,05-warning-bad-01,06-warning-sneaky-01",
-    "eval:full": "tsx scripts/run-fixture-evals.ts"
+    "eval:full": "tsx scripts/run-fixture-evals.ts",
+    "benchmark": "tsx --env-file=.env.local scripts/model-benchmark.ts",
+    "benchmark:save": "tsx --env-file=.env.local scripts/model-benchmark.ts --save"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

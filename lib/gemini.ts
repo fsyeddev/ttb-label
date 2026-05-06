@@ -31,7 +31,7 @@ async function callWithRetryOn503<T>(fn: () => Promise<T>): Promise<T> {
 const GOVERNMENT_WARNING_OFFICIAL =
   'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.';
 
-const EXTRACTION_PROMPT = `You are a TTB (Alcohol and Tobacco Tax and Trade Bureau) label analysis assistant.
+export const EXTRACTION_PROMPT = `You are a TTB (Alcohol and Tobacco Tax and Trade Bureau) label analysis assistant.
 
 Analyze this alcohol beverage label image and extract the following fields. Return ONLY a valid JSON object — no markdown, no explanation.
 
