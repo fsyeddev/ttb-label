@@ -7,5 +7,6 @@
   "bottler_address": "Fresno, CA",
   "country_of_origin": "",
   "is_import": false,
-  "reason": "Production statement uses unapproved phrasing 'Vatted by'."
+  "description": "Non-compliant matching JSON: bad production phrasing 'Vatted by'",
+  "expected_behavior": "FAIL Production statement uses unapproved phrasing 'Vatted by'."
 }

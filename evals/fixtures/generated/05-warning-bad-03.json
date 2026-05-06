@@ -6,5 +6,7 @@
   "bottler_name": "Anchor Bay Spirits",
   "bottler_address": "Newport, RI",
   "country_of_origin": "",
-  "is_import": false
+  "is_import": false,
+  "description": "Government warning partial (first sentence only)",
+  "expected_behavior": "FAIL compliance (Incomplete government warning)"
 }

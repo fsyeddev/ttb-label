@@ -7,5 +7,6 @@
   "bottler_address": "Omaha, NE",
   "country_of_origin": "",
   "is_import": false,
-  "reason": "400 mL is not an approved TTB standard fill size."
+  "description": "Non-compliant matching JSON: bottle size 400 mL",
+  "expected_behavior": "FAIL 400 mL is not an approved TTB standard fill size."
 }

@@ -7,5 +7,6 @@
   "bottler_address": "Louisville, KY",
   "country_of_origin": "",
   "is_import": false,
-  "reason": "Whisky aged under 4 years requires an age statement on the label."
+  "description": "Non-compliant matching JSON: missing age statement on Bourbon",
+  "expected_behavior": "FAIL Whisky aged under 4 years requires an age statement on the label."
 }

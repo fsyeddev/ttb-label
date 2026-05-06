@@ -6,5 +6,7 @@
   "bottler_name": "Fox Distillers",
   "bottler_address": "Lexington, KY",
   "country_of_origin": "",
-  "is_import": false
+  "is_import": false,
+  "description": "Government warning title case 'Government Warning'",
+  "expected_behavior": "FAIL compliance (Government Warning not in ALL CAPS)"
 }

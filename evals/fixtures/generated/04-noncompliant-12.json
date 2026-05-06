@@ -7,5 +7,6 @@
   "bottler_address": "Chicago, IL",
   "country_of_origin": "",
   "is_import": false,
-  "reason": "Straight whiskies require a state of distillation on the label."
+  "description": "Non-compliant matching JSON: missing state of distillation on Straight Bourbon",
+  "expected_behavior": "FAIL Straight whiskies require a state of distillation on the label."
 }

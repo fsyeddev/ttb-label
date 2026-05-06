@@ -6,5 +6,7 @@
   "bottler_name": "Silver Crest Spirits",
   "bottler_address": "Seattle, WA",
   "country_of_origin": "",
-  "is_import": false
+  "is_import": false,
+  "description": "JSON wrong class type, label correct",
+  "expected_behavior": "FAIL on cross-validation (Class mismatch)"
 }

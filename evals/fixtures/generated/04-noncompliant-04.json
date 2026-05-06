@@ -7,5 +7,6 @@
   "bottler_address": "Denver, CO",
   "country_of_origin": "",
   "is_import": false,
-  "reason": "1500 mL is not an approved TTB standard fill size (1750 mL is approved, not 1500)."
+  "description": "Non-compliant matching JSON: bottle size 1500 mL",
+  "expected_behavior": "FAIL 1500 mL is not an approved TTB standard fill size."
 }

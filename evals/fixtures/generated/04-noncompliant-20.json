@@ -7,5 +7,6 @@
   "bottler_address": "Denver, CO",
   "country_of_origin": "",
   "is_import": false,
-  "reason": "Fanciful or invented designations like 'Mountain Ice' are not approved classes."
+  "description": "Non-compliant matching JSON: fanciful name in class field 'Mountain Ice'",
+  "expected_behavior": "FAIL Fanciful or invented designations like 'Mountain Ice' are not approved classes."
 }

@@ -6,5 +6,7 @@
   "bottler_name": "Glacier Distillers",
   "bottler_address": "Anchorage, AK",
   "country_of_origin": "",
-  "is_import": false
+  "is_import": false,
+  "description": "JSON wrong net contents, label correct",
+  "expected_behavior": "FAIL on cross-validation (Net contents mismatch)"
 }

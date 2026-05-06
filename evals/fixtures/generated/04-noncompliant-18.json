@@ -7,5 +7,6 @@
   "bottler_address": "Hilo, HI",
   "country_of_origin": "",
   "is_import": false,
-  "reason": "Fanciful or invented designations like 'Volcano Fire' are not approved classes."
+  "description": "Non-compliant matching JSON: fanciful name in class field 'Volcano Fire'",
+  "expected_behavior": "FAIL Fanciful or invented designations like 'Volcano Fire' are not approved classes."
 }
