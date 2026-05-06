@@ -98,12 +98,13 @@ export default function LabelVerifier() {
         const networkMs = Math.max(0, fetchTotalMs - t.totalServerMs);
         // eslint-disable-next-line no-console
         console.groupCollapsed(
-          `[verify] ${imageFile.name} — ${fetchTotalMs}ms total (image ${t.imageSizeKB} KB)`
+          `[verify] ${imageFile.name} — ${fetchTotalMs}ms total (${t.imageSizeKB} KB → ${t.resizedSizeKB} KB after resize)`
         );
         // eslint-disable-next-line no-console
         console.table({
           'form parse (server)': { ms: t.formParseMs },
-          'image decode + base64 (server)': { ms: t.imageDecodeMs },
+          'image decode (server)': { ms: t.imageDecodeMs },
+          'image preprocess / resize (server)': { ms: t.imagePreprocessMs },
           'Gemini extraction (server)': { ms: t.geminiExtractionMs },
           'validation (server)': { ms: t.validationMs },
           'server total': { ms: t.totalServerMs },

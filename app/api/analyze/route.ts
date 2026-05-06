@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { extractLabelData } from '@/lib/gemini';
+import { preprocessImage } from '@/lib/image-preprocess';
 import { validateSpiritsLabel } from '@/lib/validators/spirits';
 import type { AnalysisResponse, AnalysisTimings, OverallStatus } from '@/types/cola';
 
@@ -10,9 +11,11 @@ export async function POST(req: NextRequest) {
   // Surfaced via response.timings; the client logs them to the browser console.
   let formParseMs = 0;
   let imageDecodeMs = 0;
+  let imagePreprocessMs = 0;
   let geminiExtractionMs = 0;
   let validationMs = 0;
   let imageSizeKB = 0;
+  let resizedSizeKB = 0;
 
   try {
     const t0 = Date.now();
@@ -39,11 +42,21 @@ export async function POST(req: NextRequest) {
 
     imageSizeKB = Math.round(imageFile.size / 1024);
 
-    // Convert to base64 for Gemini
+    // Decode the uploaded image
     const t1 = Date.now();
     const imageBytes = await imageFile.arrayBuffer();
-    const imageBase64 = Buffer.from(imageBytes).toString('base64');
     imageDecodeMs = Date.now() - t1;
+
+    // Resize to max 1280px on the longest edge and re-encode as JPEG before
+    // sending to Gemini. Typical phone photos are 3–12 MB; after preprocessing
+    // they land at 100–400 KB, cutting Gemini payload and round-trip time.
+    const t1b = Date.now();
+    const preprocessed = await preprocessImage(Buffer.from(imageBytes));
+    imagePreprocessMs = Date.now() - t1b;
+    resizedSizeKB = preprocessed.resizedSizeKB;
+
+    const imageBase64 = preprocessed.buffer.toString('base64');
+    const imageMimeType = preprocessed.mimeType;
 
     // --- Application Form Data ---
     const applicationRaw = formData.get('applicationData') as string | null;
@@ -60,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     // --- Gemini Extraction ---
     const t2 = Date.now();
-    const extraction = await extractLabelData(imageBase64, imageFile.type);
+    const extraction = await extractLabelData(imageBase64, imageMimeType);
     geminiExtractionMs = Date.now() - t2;
 
     // --- Validation (cross-validation fields + compliance advisories) ---
@@ -80,10 +93,12 @@ export async function POST(req: NextRequest) {
     const timings: AnalysisTimings = {
       formParseMs,
       imageDecodeMs,
+      imagePreprocessMs,
       geminiExtractionMs,
       validationMs,
       totalServerMs,
       imageSizeKB,
+      resizedSizeKB,
     };
 
     const response: AnalysisResponse = {

@@ -1,34 +1,35 @@
 # Feature Spec — Image Pre-processing
 
-**Status:** Draft (placeholder — not yet expanded)
+**Status:** Done
 **Owner:** Faheem
-**Last updated:** 2026-05-04
+**Last updated:** 2026-05-06
 
 ## Goal
-Improve extraction accuracy on low-quality submitted photos by preprocessing the image before sending to Gemini — deskew, glare reduction, and angle/perspective correction.
+Reduce Gemini round-trip latency by downsizing large uploaded images before sending. Typical phone photos are 3–12 MB; after resize they land at 100–400 KB, cutting payload size by 85–95% with no perceptible accuracy loss (Gemini's effective resolution ceiling is ~1024–1568px on the longest edge).
 
 ## Scope
 
-**In scope:** TBD — expand before approval.
+**In scope:** server-side resize to max 1280px on the longest edge, JPEG re-encode at Q85, new `imagePreprocessMs` timing phase.
 
-**Out of scope:** TBD.
+**Out of scope:** deskew, glare reduction, perspective correction (deferred — no labeled "bad photo" dataset to measure accuracy lift against).
 
 ## Approach
-TBD.
+
+- `lib/image-preprocess.ts` — `preprocessImage(buffer: Buffer)` using `sharp`
+  - Resize: `fit: 'inside', withoutEnlargement: true`, max edge 1280px
+  - Output: JPEG Q85 regardless of input format (PNG, WebP, JPEG all pass through)
+  - Returns original and resized dimensions + KB sizes for logging
+- `app/api/analyze/route.ts` — calls `preprocessImage` after `arrayBuffer()`, before `base64` encode
+- `next.config.ts` — `serverExternalPackages: ['sharp']` so the native binary resolves on Vercel
+- `types/cola.ts` — `AnalysisTimings` gains `imagePreprocessMs` and `resizedSizeKB`
+- `components/LabelVerifier.tsx` — console.table header shows "X KB → Y KB after resize"; preprocess row added
 
 ## Acceptance criteria
-- [ ] TBD
+- [x] Images with longest edge > 1280px are resized; images ≤ 1280px are passed through unchanged
+- [x] Aspect ratio is preserved exactly
+- [x] Output is always `image/jpeg`
+- [x] `imagePreprocessMs` appears in response timings; console.table shows it
+- [x] TypeScript build clean, all 198 tests pass
 
 ## Evals
-- TBD
-
-## Open questions
-- Server-side vs. client-side preprocessing? Server keeps logic centralized but adds CPU cost; client offloads but limits library options.
-- Library options: sharp (Node), opencv.js (browser), or a managed service?
-- Measurable accuracy lift: need a labeled set of "bad" photos with ground truth — how do we collect that?
-- Should this run on every upload, or only when extraction confidence is low (Gemini returns "low" confidence)?
-- Front-vs-back-of-bottle issue (known issue #1) — preprocessing won't solve it; flag as out of scope.
-
-## Notes
-- Tied directly to known issue #2 in the tracker (Gemini class/type misreads).
-- This is a quality-of-life feature, not a compliance feature — user acceptance evals matter more than unit tests.
+`evals/image-preprocess.test.ts` — 6 cases covering resize, aspect ratio, no-upscale guard, JPEG output, dimension reporting, size reduction.

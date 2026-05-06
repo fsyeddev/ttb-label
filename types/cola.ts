@@ -95,11 +95,13 @@ export interface ComplianceFlag {
 // having to instrument by hand. All values in milliseconds.
 export interface AnalysisTimings {
   formParseMs: number;        // multipart/FormData decode on the server
-  imageDecodeMs: number;      // arrayBuffer + base64 encode (CPU-bound, scales with image size)
+  imageDecodeMs: number;      // arrayBuffer read (CPU-bound, scales with image size)
+  imagePreprocessMs: number;  // sharp resize + JPEG encode before sending to Gemini
   geminiExtractionMs: number; // round-trip to Gemini including any retries
   validationMs: number;       // cross-validation + compliance checks (pure JS)
   totalServerMs: number;      // sum of phases + overhead — equals processingMs
-  imageSizeKB: number;        // uploaded image size, useful when triaging slow runs
+  imageSizeKB: number;        // original uploaded image size
+  resizedSizeKB: number;      // size after preprocessing (what Gemini actually receives)
 }
 
 // Full analysis response from /api/analyze
