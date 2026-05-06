@@ -108,25 +108,20 @@ describe("compareGovernmentWarning", () => {
   });
 
   it("fails when warning is present but severely truncated", () => {
-    // BUG-08 refinement: distance > MAX_WARNING_DISTANCE (10 chars) hard-fails.
-    // First-sentence truncation drops ~160 chars from the 218-char official —
-    // far past the warning band. Agents shouldn't have to review obvious garbage.
     const partial = "GOVERNMENT WARNING: (1) According to the Surgeon General...";
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, partial);
     expect(r.status).toBe("fail");
-    expect(r.note).toMatch(/more than ~5%/i);
+    expect(r.note).toMatch(/statutory wording is exact/i);
   });
 
-  it("warns when warning has hyphen artifacts plus minor OCR noise", () => {
-    // Realistic OCR: line-break hyphens join back cleanly via joinHyphens
-    // (case-correct), but a couple of incidental character misreads remain.
-    // Total distance stays in the warning band (≤ MAX_WARNING_DISTANCE).
-    // (The previous all-caps "GEN- ERAL" / "CONSUMP- TION" version was a
-    // synthetic worst case — distance 16 — which now correctly hard-fails.)
+  it("fails when warning has OCR noise beyond hyphen joining (e.g. 'casue' typo)", () => {
+    // joinHyphens cleans "Gen- eral" and "Consump- tion" — those normalize to
+    // pass. But "casue" (transposed 'u'/'s') is a 2-char distance from "cause"
+    // and is not cleaned by any normalization step → hard fail.
     const withHyphensAndNoise =
       "GOVERNMENT WARNING: (1) According to the Surgeon Gen- eral, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consump- tion of alcoholic beverages impairs your ability to drive a car or operate machinery, and may casue health problems.";
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, withHyphensAndNoise);
-    expect(r.status).toBe("warning");
+    expect(r.status).toBe("fail");
   });
 
   it("fails when warning is completely absent", () => {
@@ -139,31 +134,28 @@ describe("compareGovernmentWarning", () => {
   // must not auto-pass. Each test below mirrors a real cat-6 fixture from
   // evals/fixtures/generated/06-warning-sneaky-{01,03,04,05}.json.
 
-  it("warns when 'may cause' is substituted with 'could cause'", () => {
+  it("fails when 'may cause' is substituted with 'could cause'", () => {
     const sneaky = GOVERNMENT_WARNING_OFFICIAL.replace("may cause", "could cause");
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, sneaky);
-    expect(r.status).toBe("warning");
+    expect(r.status).toBe("fail");
   });
 
-  it("warns when 'a Surgeon General' replaces 'the Surgeon General'", () => {
+  it("fails when 'a Surgeon General' replaces 'the Surgeon General'", () => {
     const sneaky = GOVERNMENT_WARNING_OFFICIAL.replace("the Surgeon General", "a Surgeon General");
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, sneaky);
-    expect(r.status).toBe("warning");
+    expect(r.status).toBe("fail");
   });
 
-  it("warns when 'alcohol beverages' replaces 'alcoholic beverages' in the first sentence", () => {
-    // Replace only the first occurrence so the second sentence still matches.
+  it("fails when 'alcohol beverages' replaces 'alcoholic beverages' in the first sentence", () => {
     const sneaky = GOVERNMENT_WARNING_OFFICIAL.replace("alcoholic beverages", "alcohol beverages");
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, sneaky);
-    expect(r.status).toBe("warning");
+    expect(r.status).toBe("fail");
   });
 
-  it("warns when colon is missing after GOVERNMENT WARNING", () => {
-    // CAPS prefix is intact — should NOT hard-fail. Falls into equality check
-    // and surfaces as warning so the agent can confirm wording integrity.
+  it("fails when colon is missing after GOVERNMENT WARNING", () => {
     const sneaky = GOVERNMENT_WARNING_OFFICIAL.replace("GOVERNMENT WARNING:", "GOVERNMENT WARNING");
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, sneaky);
-    expect(r.status).toBe("warning");
+    expect(r.status).toBe("fail");
   });
 
   // ─── BUG-09 — Case-insensitive body comparison ─────────────────────────────
@@ -201,13 +193,11 @@ describe("compareGovernmentWarning", () => {
   });
 
   it("fails when warning is wholly different text", () => {
-    // CAPS prefix satisfied but the body is unrelated — distance well past
-    // MAX_WARNING_DISTANCE. Should hard-fail, not route to review.
     const garbage =
       "GOVERNMENT WARNING: This product may contain ingredients that some people find delicious. Side effects include enjoying yourself. Drink responsibly within reason.";
     const r = compareGovernmentWarning(GOVERNMENT_WARNING_OFFICIAL, garbage);
     expect(r.status).toBe("fail");
-    expect(r.note).toMatch(/more than ~5%/i);
+    expect(r.note).toMatch(/statutory wording is exact/i);
   });
 });
 
