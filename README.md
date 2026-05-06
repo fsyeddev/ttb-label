@@ -20,7 +20,7 @@ Deployed URL: https://cola-verify.vercel.app/
 
 ## How to Use
 
-1. **Upload a label image** — JPEG, PNG, or WEBP, max 10 MB
+1. **Upload a label image** — JPEG, PNG, or WEBP, max 4 MB
 2. **Enter application data** — fill in the form fields, or click "Import from JSON / CSV" to upload a file
 3. **Click Analyze Label** — results appear in under 5 seconds
 4. **Review per-field results** — each field shows PASS / FAIL / REVIEW with an explanation
