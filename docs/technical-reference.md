@@ -72,8 +72,9 @@ Image + FormData
 - `fuzzyContains` — partial match for address fields
 - `similarity` — Levenshtein distance ratio (0–1)
 - `levenshtein` — raw Levenshtein edit distance (exposed for user-facing magnitude signals like "differs by N characters")
-- `compareTextField` — tiered result: pass (≥0.85), warning (0.6–0.85), fail (<0.6). Used for `bottler_address`, `class_type`, `country_of_origin`.
-- `compareCompanyName` — binary pass/fail (no warning tier). Equal-after-normalize via `fuzzyEqual` is the only path to pass; anything else fails. Wired only at `brand_name` and `bottler_name`. See BUG-01 / [`docs/specs/company-name-suffix-strip.md`](specs/company-name-suffix-strip.md). The strict-binary stance is deliberate: text comparison can't reliably distinguish OCR error from human typo, so mismatch always fails and the planned visual-verification feature is the catch path for OCR-side discrepancies.
+- `compareTextField` — tiered result: pass (≥0.85), warning (0.6–0.85), fail (<0.6). Used for `class_type`, `country_of_origin`, and as the fallback inside `compareAddressField`.
+- `compareCompanyName` — binary pass/fail, no warning tier. `fuzzyEqual(submitted, extracted)` is the only path to pass; case/whitespace/apostrophe/dash differences are absorbed by `normalize()` and all pass cleanly. Anything else fails. Wired only at `brand_name` and `bottler_name`. Case is not regulated by TTB for these fields (27 CFR Part 5). See BUG-01 / [`docs/specs/company-name-suffix-strip.md`](specs/company-name-suffix-strip.md) and BUG-10 / [`docs/specs/case-insensitive-and-address-substring.md`](specs/case-insensitive-and-address-substring.md).
+- `compareAddressField` — address-aware comparator for `bottler_address`. Checks full equality first (`fuzzyEqual`), then checks whether the submitted address is a substring of the extracted label address (`fuzzyContains(extracted, submitted)`). When the application address is a case-insensitive substring of the label address, the field passes with a note that the label has additional detail (e.g., postal code, country) — permitted under 27 CFR 5.36. Falls back to `compareTextField` similarity tiers for all other cases.
 
 ### Spirits Validator — `lib/validators/spirits.ts`
 - `APPROVED_CLASS_TYPES` — representative list of approved 27 CFR Part 5 designations
@@ -83,7 +84,8 @@ Image + FormData
   - Class/type: fuzzy match + CFR approval check (fail stays fail; pass → warning if unapproved)
   - ABV: numeric regex
   - Net contents: unit-normalized regex
-  - Bottler name + address: fuzzy match
+  - Bottler name: `compareCompanyName` (binary pass/fail)
+  - Bottler address: `compareAddressField` (substring-aware; application ⊆ label passes)
   - Country of origin: required only for imports
   - Government warning: auto-checked against official TTB text (agent does not submit this field)
 

@@ -4,7 +4,7 @@
 import type { ApplicationData, ExtractionResult, FieldResult, ComplianceFlag } from '@/types/cola';
 import { COLA_FIELD_LABELS } from '@/types/cola';
 import { compareABV, compareNetContents, compareGovernmentWarning, GOVERNMENT_WARNING_OFFICIAL } from './regex';
-import { compareTextField, compareCompanyName } from './semantic';
+import { compareTextField, compareCompanyName, compareAddressField } from './semantic';
 import { runComplianceChecks } from './compliance';
 
 // Approved class/type designations from 27 CFR Part 5.22 and 5.35
@@ -215,8 +215,8 @@ export function validateSpiritsLabel(
     complianceNote: 'Bottler/producer name and address required (27 CFR 5.54)',
   });
 
-  // 6. Bottler Address — fuzzy
-  const bottlerAddrResult = compareTextField(formData.bottler_address, extraction.bottler_address, 'Bottler Address');
+  // 6. Bottler Address — substring-aware (compliance: app ⊆ label = pass)
+  const bottlerAddrResult = compareAddressField(formData.bottler_address, extraction.bottler_address, 'Bottler Address');
   results.push({
     field: 'bottler_address',
     label: COLA_FIELD_LABELS.bottler_address,

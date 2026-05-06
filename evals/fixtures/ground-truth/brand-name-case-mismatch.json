@@ -1,6 +1,6 @@
 {
   "id": "brand-name-case-mismatch",
-  "description": "'STONE'S THROW' on label vs 'Stone's Throw' in application — surfaces as REVIEW per w03 results redesign",
+  "description": "'STONE'S THROW' on label vs 'Stone's Throw' in application — passes as case-only variation (TTB does not regulate case for brand_name).",
   "formData": {
     "brand_name": "Stone's Throw",
     "class_type": "Bourbon Whiskey",
@@ -23,9 +23,9 @@
     "government_warning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
     "confidence": "high"
   },
-  "expectedOverall": "REVIEW",
+  "expectedOverall": "PASS",
   "expectedFields": {
-    "brand_name": "warning",
+    "brand_name": "pass",
     "class_type": "pass",
     "abv": "pass",
     "net_contents": "pass",

@@ -137,6 +137,7 @@ These categories all worked as designed and need no further action:
 - **Resolution:** Replaced the tiered `compareTextField` for `brand_name` and `bottler_name` with a new binary `compareCompanyName` (pass/fail only) in `lib/validators/semantic.ts`. Equality is `fuzzyEqual` (case/whitespace/apostrophe/dash normalized); anything non-equal is `fail`. No warning tier, no suffix stripping, no typo tolerance — the system can't distinguish OCR error from human error at the text-comparison layer, so mismatch always fails. OCR-side discrepancies (truncation, missed words) are deferred to the planned visual-verification feature instead of being papered over in code.
 - **Spec:** [`docs/specs/company-name-suffix-strip.md`](specs/company-name-suffix-strip.md). Filename retained from initial scoping; design landed on binary strict-equality after discussion (suffix stripping became dead code under "any mismatch fails").
 - **Tests:** 10 new cases in `evals/validators.test.ts` (`compareCompanyName — BUG-01` block) covering BUG-01 case, OCR truncation, suffix typo, core typo, case/whitespace normalization, punctuation strictness, null guards, no-warning invariant. New ground-truth fixture `evals/fixtures/ground-truth/bug-01-bottler-suffix-mismatch.json` for end-to-end pipeline coverage. All 146 tests passing.
+- **Note:** The implementation of BUG-01 also incidentally introduced a casing-only warning tier (via the w03 results redesign). That tier was a UX-led choice, not a compliance-led one, and was reversed by **BUG-10** after re-reading 27 CFR Part 5. See BUG-10 below.
 - **Live confirmation (2026-05-04, `https://cola-verify.vercel.app`, 4 targeted cases):**
   - `02-mismatch-05` — flipped from `failed=0 REVIEW` to `failed=1 FAIL` on `bottler_name` (`Bottler Name mismatch: submitted "Wrong Distilling Co." vs label "Prairie Wind Distilling Co."`). BUG-01 confirmed fixed.
   - `02-mismatch-01`, `02-mismatch-02` — matched their existing expectations (non-regression).
@@ -165,6 +166,14 @@ These categories all worked as designed and need no further action:
   - `06-warning-sneaky-03` (a/the Surgeon General) → **REVIEW**
   - `06-warning-sneaky-04` (alcohol/alcoholic beverages) → **REVIEW**
   - Result: cat-5 = FAIL × 4, cat-6 = REVIEW × 4 — matches the design exactly. (One Gemini 503 on the first run for `05-warning-bad-01`; retried cleanly — INFRA-04 still open.)
+
+### 🟠 BUG-10 — Case-only company-name mismatches surface as REVIEW instead of PASS
+- **Root cause:** The w03 results-redesign spec (`docs/specs/results-redesign.md`) introduced a casing-only warning tier in `compareCompanyName` so that case differences would render as yellow REVIEW cards. After re-reading 27 CFR Part 5, this tier is over-strict: TTB does not require exact case match for brand name or bottler/producer name. The only mandatory case rule is the `GOVERNMENT WARNING:` prefix (27 CFR 16.21).
+- **Symptom:** A label with `"STONE'S THROW"` vs application `"Stone's Throw"` returned `overallStatus: "REVIEW"` instead of `"PASS"`. Same for `"OLD CYPRESS DISTILLERY"` vs `"Old Cypress Distillery"`.
+- **Resolution:** `compareCompanyName` is now strictly binary pass/fail. `fuzzyEqual(submitted, extracted)` is the only path to pass — case, whitespace, apostrophe, and dash differences are absorbed by `normalize()` and all pass cleanly. The BUG-01 strict-match invariant (any non-fuzzyEqual difference is `fail`) is preserved. Also added `compareAddressField` for `bottler_address` so that application addresses that are substrings of label addresses (e.g., application `"Port Ellen, Isle of Islay"` vs label `"PORT ELLEN, ISLE OF ISLAY PA42 7DZ, SCOTLAND"`) pass instead of routing through the similarity tiers.
+- **Spec:** [`docs/specs/case-insensitive-and-address-substring.md`](specs/case-insensitive-and-address-substring.md).
+- **Tests:** 2 casing tests flipped from `warning` → `pass`; wireframe-note test removed; 6 new `compareAddressField` tests added; 2 pipeline fixtures (`brand-name-case-mismatch.json`, `old-tom-distillery.json`) updated; 2 ui-redesign pipeline tests updated. 192 tests passing.
+- **Status:** ✅ Fixed (2026-05-05)
 
 ---
 

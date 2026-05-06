@@ -71,3 +71,7 @@ The two call sites in `lib/validators/spirits.ts` (brand at the top of `validate
 
 **Status legend:** Draft → Approved → In progress → Done
 **Approval rule:** A spec must be Approved before code is written.
+
+---
+
+**Superseded — 2026-05-05:** the casing-only warning that was incidentally introduced alongside BUG-01's strict-match work (via `docs/specs/results-redesign.md`) was reversed by `docs/specs/case-insensitive-and-address-substring.md`. `compareCompanyName` is now strictly binary pass/fail with no warning tier. Case differences fold into pass via `fuzzyEqual`. The BUG-01 strict-match invariant (any non-fuzzyEqual difference is `fail`) is preserved.

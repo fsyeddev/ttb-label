@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { parseABV, compareABV, compareNetContents, compareGovernmentWarning, GOVERNMENT_WARNING_OFFICIAL } from '@/lib/validators/regex';
-import { fuzzyEqual, compareTextField, compareCompanyName } from '@/lib/validators/semantic';
+import { fuzzyEqual, compareTextField, compareCompanyName, compareAddressField } from '@/lib/validators/semantic';
 import { isApprovedClassType } from '@/lib/validators/spirits';
 
 // ─── ABV ────────────────────────────────────────────────────────────────────
@@ -233,17 +233,16 @@ describe("fuzzyEqual", () => {
 
 // ─── compareCompanyName — BUG-01 strict-match comparator ────────────────────
 //
-// Three outcomes for brand_name and bottler_name:
-//   - pass: trimmed/whitespace-collapsed strings are byte-equal, OR the only
-//     difference is fuzzyEqual-level (apostrophe / dash variants).
-//   - warning: letters are identical, only ASCII case differs (added with the
-//     w03 results redesign — see docs/specs/results-redesign.md).
-//   - fail: anything beyond that. BUG-01 invariant — no similarity band.
+// Two outcomes only for brand_name and bottler_name:
+//   - pass: fuzzyEqual(submitted, extracted) is true (case/whitespace/apostrophe/
+//     dash differences absorbed by normalize()).
+//   - fail: anything else. BUG-01 invariant — no similarity band, no warning tier.
 //
+// Case is not regulated by TTB for brand/bottler fields (27 CFR Part 5).
 // Visual verification (docs/specs/visual-verification.md) remains the catch
 // path for OCR-side discrepancies. The text comparator stays strict so it
 // never silently papers over agent-form errors.
-// See docs/specs/company-name-suffix-strip.md for the original design.
+// See docs/specs/company-name-suffix-strip.md and docs/specs/case-insensitive-and-address-substring.md.
 
 describe("compareCompanyName — BUG-01", () => {
   it("fails on shared-suffix mismatch — the BUG-01 case", () => {
@@ -276,10 +275,9 @@ describe("compareCompanyName — BUG-01", () => {
     expect(r.status).toBe("fail");
   });
 
-  it("warns on case-only difference (results-redesign: surfaced as REVIEW)", () => {
+  it("passes on case-only difference (case is not regulated for company-name fields)", () => {
     const r = compareCompanyName("OLD TOM DISTILLERY", "Old Tom Distillery", "Brand Name");
-    expect(r.status).toBe("warning");
-    expect(r.note).toMatch(/Casing differs but text matches/);
+    expect(r.status).toBe("pass");
   });
 
   it("passes on exact match (case-sensitive)", () => {
@@ -320,9 +318,9 @@ describe("compareCompanyName — BUG-01", () => {
   });
 
   it("never returns warning for real text mismatches — BUG-01 invariant", () => {
-    // Warning is reserved exclusively for casing-only divergence. Anything else
-    // that isn't fuzzyEqual must hard-fail; we never let a typo, truncation,
-    // shared-suffix collision, or punctuation drift slip into the warning band.
+    // The comparator is binary: pass or fail. Any difference that isn't
+    // fuzzyEqual must hard-fail; we never let a typo, truncation,
+    // shared-suffix collision, or punctuation drift slip through.
     const cases: Array<[string, string]> = [
       ["Old Tom Distillery", "Old Tom Distilery"],     // typo
       ["Wrong Distilling Co.", "Prairie Wind Distilling Co."], // BUG-01
@@ -335,15 +333,54 @@ describe("compareCompanyName — BUG-01", () => {
     }
   });
 
-  it("warns on case-difference even with extra whitespace", () => {
-    // Letters identical, only ASCII case + whitespace differ → warning.
+  it("passes on case-difference combined with extra whitespace", () => {
     const r = compareCompanyName("OLD CYPRESS  DISTILLERY", "Old Cypress Distillery", "Brand Name");
-    expect(r.status).toBe("warning");
+    expect(r.status).toBe("pass");
+  });
+});
+
+// ─── compareAddressField — substring-aware address comparator ────────────────
+
+describe("compareAddressField", () => {
+  it("passes on exact address match", () => {
+    const r = compareAddressField("Portland, OR 97201", "Portland, OR 97201", "Bottler Address");
+    expect(r.status).toBe("pass");
   });
 
-  it("preserves warning note copy used by the w03 wireframe", () => {
-    const r = compareCompanyName("Old Cypress Distillery", "OLD CYPRESS DISTILLERY", "Bottler Name");
-    expect(r.note).toBe("Casing differs but text matches. Likely acceptable — confirm.");
+  it("passes when application is a substring of label (case-insensitive)", () => {
+    const r = compareAddressField(
+      "Port Ellen, Isle of Islay",
+      "PORT ELLEN, ISLE OF ISLAY PA42 7DZ, SCOTLAND",
+      "Bottler Address"
+    );
+    expect(r.status).toBe("pass");
+    expect(r.note).toMatch(/additional detail/i);
+  });
+
+  it("passes when application is a casing variant of label", () => {
+    const r = compareAddressField(
+      "port ellen, isle of islay",
+      "Port Ellen, Isle of Islay",
+      "Bottler Address"
+    );
+    expect(r.status).toBe("pass");
+  });
+
+  it("falls back to similarity tier when neither equality nor substring holds", () => {
+    const r = compareAddressField("Louisville, KY", "Lexington, KY", "Bottler Address");
+    expect(r.status).toBe("fail");
+  });
+
+  it("fails when extracted is null", () => {
+    const r = compareAddressField("Portland, OR 97201", null, "Bottler Address");
+    expect(r.status).toBe("fail");
+    expect(r.note).toMatch(/not found on label/i);
+  });
+
+  it("fails when submitted is null", () => {
+    const r = compareAddressField(null, "Portland, OR 97201", "Bottler Address");
+    expect(r.status).toBe("fail");
+    expect(r.note).toMatch(/not provided in application/i);
   });
 });
 

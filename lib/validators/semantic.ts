@@ -68,20 +68,45 @@ export function similarity(a: string | null, b: string | null): number {
 
 /**
  * Strict-equality comparator for company-name fields (brand_name, bottler_name).
- * Three outcomes only:
- *   - pass: trimmed strings are byte-equal.
- *   - warning: strings differ only by case / punctuation / whitespace
- *     (i.e., fuzzyEqual is true). Surfaced as REVIEW so the agent confirms.
- *   - fail: anything beyond that. BUG-01 invariant — no similarity band.
+ * Two outcomes only — pass or fail. No similarity band, no casing warning.
  *
- * The narrow warning tier was added with the w03 results redesign so casing-only
- * mismatches stop being silent passes. Real text mismatches still hard-fail —
- * see `docs/specs/results-redesign.md` and `docs/specs/company-name-suffix-strip.md`.
+ *   pass: fuzzyEqual(submitted, extracted) is true (case/whitespace/apostrophe/
+ *         dash differences are absorbed by `normalize()`).
+ *   fail: anything else.
  *
- * Wired only at brand_name and bottler_name call sites in spirits.ts. Other
- * text fields (address, class/type, etc.) keep using compareTextField.
+ * Case is not regulated by TTB for these fields (27 CFR Part 5; the only
+ * mandatory case rule is the "GOVERNMENT WARNING:" prefix in 27 CFR 16.21).
+ * Wired only at brand_name and bottler_name call sites in spirits.ts.
  */
 export function compareCompanyName(
+  submitted: string | null,
+  extracted: string | null,
+  fieldLabel: string
+): { match: boolean; status: 'pass' | 'fail'; note?: string } {
+  if (!extracted) {
+    return { match: false, status: 'fail', note: `${fieldLabel} not found on label` };
+  }
+  if (!submitted) {
+    return { match: false, status: 'fail', note: `${fieldLabel} not provided in application` };
+  }
+  if (fuzzyEqual(submitted, extracted)) {
+    return { match: true, status: 'pass' };
+  }
+  return {
+    match: false,
+    status: 'fail',
+    note: `${fieldLabel} mismatch: submitted "${submitted}" vs label "${extracted}"`,
+  };
+}
+
+/**
+ * Address-aware comparator for bottler_address. Adds a substring branch on top
+ * of the standard tiered comparison: when the application's submitted address
+ * appears (case-insensitively) inside the extracted label address, treat as
+ * pass — the label has all the substantive info plus more (e.g., postal code,
+ * country), which is permitted under 27 CFR 5.36.
+ */
+export function compareAddressField(
   submitted: string | null,
   extracted: string | null,
   fieldLabel: string
@@ -92,31 +117,19 @@ export function compareCompanyName(
   if (!submitted) {
     return { match: false, status: 'fail', note: `${fieldLabel} not provided in application` };
   }
-  // Whitespace-collapsed comparison so a stray double-space alone doesn't
-  // trip the casing check.
-  const sCollapsed = submitted.trim().replace(/\s+/g, ' ');
-  const eCollapsed = extracted.trim().replace(/\s+/g, ' ');
-  if (sCollapsed === eCollapsed) {
+  if (fuzzyEqual(submitted, extracted)) {
     return { match: true, status: 'pass' };
   }
-  if (sCollapsed.toLowerCase() === eCollapsed.toLowerCase()) {
-    // Letters identical, only case changed.
+  if (fuzzyContains(extracted, submitted)) {
     return {
       match: true,
-      status: 'warning',
-      note: 'Casing differs but text matches. Likely acceptable — confirm.',
+      status: 'pass',
+      note: 'Application address is contained within the label address — additional detail on the label (e.g., postal code, country) is acceptable.',
     };
   }
-  if (fuzzyEqual(submitted, extracted)) {
-    // Apostrophe / dash / other normalize-equivalent variants. Treat as pass —
-    // this is below the bar where an agent should pause.
-    return { match: true, status: 'pass' };
-  }
-  return {
-    match: false,
-    status: 'fail',
-    note: `${fieldLabel} mismatch: submitted "${submitted}" vs label "${extracted}"`,
-  };
+  // Fall back to the existing tiered similarity comparator so partial-overlap
+  // cases that don't satisfy the substring rule still get the warning band.
+  return compareTextField(submitted, extracted, fieldLabel);
 }
 
 /**

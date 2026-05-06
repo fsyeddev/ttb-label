@@ -109,3 +109,7 @@ Land alongside the implementation in the same change.
 ---
 
 **Status legend:** Draft → Approved → In progress → Done
+
+---
+
+**Superseded — 2026-05-05:** the casing-only warning tier introduced in this spec was reversed by `docs/specs/case-insensitive-and-address-substring.md`. Field cards no longer show yellow on case-only mismatches for brand_name and bottler_name; they pass green. TTB does not regulate case for these fields (27 CFR Part 5; only the `GOVERNMENT WARNING:` prefix has a mandatory-case requirement under 27 CFR 16.21). The rest of the w03 layout is unaffected.

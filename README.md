@@ -241,3 +241,21 @@ npm install -g vercel
 vercel
 # Add GEMINI_API_KEY in Vercel project settings -> Environment Variables
 ```
+
+---
+
+## Compliance interpretation — case sensitivity and address strictness
+
+The validator is intentionally strict in some places and lenient in others, based on a reading of 27 CFR Part 5:
+
+**Case-insensitive (label and application can use different casing):**
+- Brand name, bottler/producer name, and class/type designation all pass when the only difference is letter case. TTB does not mandate exact case match for these fields; the only mandatory case rule is the `GOVERNMENT WARNING:` prefix (27 CFR 16.21), which the system enforces.
+
+**Application address as a substring of label address passes:**
+- If the agent submits `"Port Ellen, Isle of Islay"` and the label shows `"PORT ELLEN, ISLE OF ISLAY PA42 7DZ, SCOTLAND"`, the system passes the field. The label is fully compliant; the application is just less detailed. This pattern is common for foreign products where the label adds postal code and country.
+
+**Class/type designation must match the label exactly (in substance, not case):**
+- If the agent submits `"Scotch Whisky"` but the label shows `"Islay Single Malt Scotch Whisky"`, the system fails the field. The label has a more specific designation (which is itself compliant), but the application has not captured what the label actually says. The agent must transcribe the label's full class designation. This is enforced because an incomplete application is a compliance miss under 27 CFR 5.36 (name and address; class designation is required as printed). The system intentionally surfaces this as `fail` so the agent corrects the application before submission.
+
+**Government warning is statutorily exact:**
+- See `docs/specs/govwarn-100pct-threshold.md` for the three-tier distance model. Body casing is folded (per BUG-09); wording deviations route to warning or fail by character distance.

@@ -200,9 +200,9 @@ describe('deriveStages — verifying screen progression', () => {
   });
 });
 
-// ─── compareCompanyName — casing warning surfaces in the pipeline ───────────
+// ─── compareCompanyName — casing passes in the pipeline ─────────────────────
 
-describe('w03 results-redesign casing warning — pipeline integration', () => {
+describe('w03 results-redesign casing — pipeline integration (casing now passes per BUG-10)', () => {
   const baseExtraction: ExtractionResult = {
     brand_name: 'Old Cypress Distillery',
     class_type: 'Kentucky Straight Bourbon Whiskey',
@@ -226,20 +226,18 @@ describe('w03 results-redesign casing warning — pipeline integration', () => {
     is_import: false,
   };
 
-  it('casing-only bottler name lands as REVIEW (w03 wireframe scenario)', () => {
+  it('casing-only bottler name passes cleanly (case not regulated — BUG-10)', () => {
     const { fields } = validateSpiritsLabel(baseForm, baseExtraction);
     const bottler = fields.find((f) => f.field === 'bottler_name');
-    expect(bottler?.status).toBe('warning');
-    expect(bottler?.note).toBe('Casing differs but text matches. Likely acceptable — confirm.');
+    expect(bottler?.status).toBe('pass');
   });
 
-  it('overall verdict escalates from PASS to REVIEW when casing-only mismatch present', () => {
-    // Without the new behavior, this would have been a silent PASS.
+  it('overall verdict is clean PASS when only casing differs on company-name field', () => {
     const { fields } = validateSpiritsLabel(baseForm, baseExtraction);
     const hasFail = fields.some((f) => f.status === 'fail');
     const hasWarning = fields.some((f) => f.status === 'warning');
     expect(hasFail).toBe(false);
-    expect(hasWarning).toBe(true);
+    expect(hasWarning).toBe(false);
   });
 
   it('exact-case match remains a clean PASS with no note', () => {
