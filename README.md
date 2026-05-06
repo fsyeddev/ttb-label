@@ -10,6 +10,14 @@ Deployed URL: https://cola-verify.vercel.app/
 
 ---
 
+## At a glance
+
+| 1. Upload + form | 2. Verifying | 3. Results |
+|---|---|---|
+| ![Upload form with application data](docs/screenshots/01-home.png) | ![Loading state with progress steps](docs/screenshots/02-verifying.png) | ![Per-field verification results](docs/screenshots/03-results.png) |
+
+---
+
 ## How to Use
 
 1. **Upload a label image** — JPEG, PNG, or WEBP, max 10 MB
