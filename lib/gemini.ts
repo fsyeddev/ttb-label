@@ -35,6 +35,8 @@ export const EXTRACTION_PROMPT = `You are a TTB (Alcohol and Tobacco Tax and Tra
 
 Analyze this alcohol beverage label image and extract the following fields. Return ONLY a valid JSON object — no markdown, no explanation.
 
+Return text exactly as it appears on the label, including any errors. Do not normalize, correct, or rewrite text.
+
 Required fields to extract:
 - brand_name: The primary brand or trademark name ONLY — the registered trade name under which the product is sold (e.g., "Jack Daniel's", "Jim Beam", "Maker's Mark", "Grey Goose"). Do NOT include the expression, variant, or fanciful name (e.g., for "Jack Daniel's Tennessee Fire" the brand_name is "Jack Daniel's" and "Tennessee Fire" is the fanciful name — omit it here). When in doubt, the brand name is the largest or most prominent name that is also a registered trademark.
 - class_type: The legal TTB class and type designation as defined in 27 CFR Part 5 — this is the regulatory product category, NOT the brand expression or fanciful name. It typically appears as smaller regulatory text (e.g., "Cinnamon Liqueur", "Kentucky Straight Bourbon Whiskey", "Vodka", "London Dry Gin"). Fanciful or expression names like "Tennessee Fire", "Black Label", or "Single Barrel" are NOT class/type designations — ignore them. Look for words like LIQUEUR, WHISKEY, VODKA, RUM, GIN used in a regulatory/descriptive context.
