@@ -63,7 +63,7 @@ export default function VerifyingScreen({
   const elapsedText = `${(elapsedMs / 1000).toFixed(1)}s`;
 
   return (
-    <div className="min-h-screen bg-slate-200/60 flex items-center justify-center px-6 py-12">
+    <div className="flex-1 bg-slate-200/60 flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         {/* Left — label preview */}
         <div className="flex flex-col items-center justify-center">

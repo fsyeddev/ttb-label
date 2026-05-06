@@ -38,7 +38,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="flex-1">
+      <main className="flex-1 flex flex-col">
         <LabelVerifierLoader />
       </main>
     </div>
