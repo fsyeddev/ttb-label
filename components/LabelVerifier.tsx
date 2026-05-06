@@ -81,6 +81,9 @@ export default function LabelVerifier() {
         body,
         signal: controller.signal,
       });
+      if (res.status === 413) {
+        throw new Error('Image file is too large to upload. Please use an image under 4 MB.');
+      }
       const json = await res.json();
       const fetchTotalMs = Math.round(performance.now() - fetchStart);
       if (!res.ok) throw new Error(json.error ?? 'Server error. Please try again.');

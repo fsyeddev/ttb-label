@@ -9,10 +9,12 @@ interface UploadZoneProps {
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 10;
+const WARN_SIZE_MB = 4;
 
 export default function UploadZone({ onImageSelected, currentFile }: UploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sizeWarning, setSizeWarning] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
 
   // Sync preview with the parent's currentFile so Clear from outside this
@@ -20,6 +22,7 @@ export default function UploadZone({ onImageSelected, currentFile }: UploadZoneP
   useEffect(() => {
     if (!currentFile) {
       setPreview(null);
+      setSizeWarning(false);
       return;
     }
     const url = URL.createObjectURL(currentFile);
@@ -30,6 +33,7 @@ export default function UploadZone({ onImageSelected, currentFile }: UploadZoneP
   const handleFile = useCallback(
     (file: File) => {
       setError(null);
+      setSizeWarning(false);
       if (!ACCEPTED_TYPES.includes(file.type)) {
         setError('Unsupported file type. Please upload a JPEG, PNG, or WEBP image.');
         return;
@@ -37,6 +41,9 @@ export default function UploadZone({ onImageSelected, currentFile }: UploadZoneP
       if (file.size > MAX_SIZE_MB * 1024 * 1024) {
         setError(`File too large. Maximum size is ${MAX_SIZE_MB} MB.`);
         return;
+      }
+      if (file.size > WARN_SIZE_MB * 1024 * 1024) {
+        setSizeWarning(true);
       }
       onImageSelected(file);
     },
@@ -131,6 +138,11 @@ export default function UploadZone({ onImageSelected, currentFile }: UploadZoneP
       {error && (
         <p className="mt-2 text-sm text-red-600 font-medium" role="alert">
           {error}
+        </p>
+      )}
+      {!error && sizeWarning && (
+        <p className="mt-2 text-sm text-amber-700 font-medium" role="alert">
+          Image is too large to upload ({WARN_SIZE_MB} MB limit). Please use a smaller image.
         </p>
       )}
     </div>
