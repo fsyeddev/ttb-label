@@ -75,7 +75,7 @@ export async function extractLabelData(imageBase64: string, mimeType: string): P
   if (!apiKey) throw new Error('GEMINI_API_KEY is not configured');
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-3.1-pro-preview' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
   const result = await callWithRetryOn503(() =>
     model.generateContent([
